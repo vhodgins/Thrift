@@ -1,0 +1,100 @@
+html {
+    height: 100%;
+}
+
+body {
+  overflow-x: hidden;
+  background: linear-gradient(to bottom left, rgb(177, 90, 19), rgb(242, 42, 42));
+  background: linear-gradient(to bottom right, rgba(255, 87, 51, 0.8) 0%, rgba(144,12,62, 0.8) 70%);
+  height: 100%;
+  margin: 0;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+.full {
+  width:100%;
+}
+
+form label {
+  margin-bottom:-10px;
+  margin-top:10px;
+  font-size: 11pt;
+}
+
+#shift-to-register:hover {
+  text-decoration:underline;
+  cursor: pointer;
+}
+#shift-to-login:hover{
+  text-decoration:underline;
+  cursor: pointer;
+}
+
+.b-type {
+  -webkit-appearance: button; /* WebKit */
+-moz-appearance: button; /* Mozilla */
+-o-appearance: button; /* Opera */
+-ms-appearance: button; /* Internet Explorer */
+appearance: button; /* CSS3 */
+}
+
+.choosetype {
+  list-style-type: none;
+  margin: 0 0 0 0;
+  padding: 0;
+  border-top: none;
+}
+
+.choosetype li {
+  float: left;
+  margin: 0 5px 0 0;
+  width: 48.5%;
+  height: 40px;
+  position: relative;
+}
+
+.choosetype label,
+.choosetype input {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.choosetype input[type="radio"] {
+  opacity: 0.01;
+  z-index: 100;
+}
+
+.choosetype input[type="radio"]:checked+label,
+.Checked+label {
+  background: rgb(196, 230, 178);
+}
+
+.choosetype label {
+  text-align: center;
+  padding: 7px;;
+  border: 1px solid #CCC;
+  border-radius: 5px;
+  cursor: pointer;
+  z-index: 90;
+}
+
+.choosetype label:hover {
+  animation-name: darken;
+  animation-duration:150ms;
+  animation-fill-mode: forwards;
+}
+
+
+@keyframes darken {
+  0%{
+    background:inherit;
+  }
+  100% {
+    background: rgb(196, 230, 178);
+  }
+}

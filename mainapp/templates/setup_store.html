@@ -1,0 +1,104 @@
+{% extends 'layout.html' %}
+{% block content %}
+<style media="screen">
+  .panel {
+    text-align: center;
+  }
+</style>
+
+<!-- Panel 1 -->
+<div class="card panel" number='1' style="width:400px; height:300px; margin:auto;">
+  <h4 style="margin-top:50px;">Welcome!</h4>
+  <p style="width:200px; margin: 0 auto 0 auto; margin-top:20px;">To get started, we first need to answer some questions</p>
+  <button type="button" num='1' name="okay!" class="btn btn-primary next" id='Okaybtn' style="width:100px; margin: 0 auto 0 auto; margin-top:30px;">Ok!</button>
+</div>
+
+<!-- Panel 2 -->
+<div class="card panel" number='2' style="width:400px; height:300px; margin:auto; display:none;">
+  <p style="width:300px; margin: 0 auto 0 auto; margin-top:50px;">What is the name of your store?</p>
+  <input autocomplete='off' type="text" num='2' class="form-control pagecontent" id="Store-name" style="width:80%; margin:auto; margin-top:20px; text-align: center;" name="" value="" placeholder="Name">
+  <div class="row" style="position:absolute; bottom:30px; margin:auto; width:100%; ">
+    <button type="button" num='2' name="back" class="btn btn-warning back" style="width:100px; margin: 0 auto 0 auto; margin-top:30px;">Back</button>
+    <button type="button" num='2' name="okay!" class="btn btn-primary next" style="width:100px; margin: 0 auto 0 auto; margin-top:30px;display:none;">Next</button>
+  </div>
+</div>
+
+<!-- Panel 3 -->
+<div class="card panel" number='3' style="width:400px; height:300px; margin:auto; display:none;">
+  <p style="width:300px; margin: 0 auto 0 auto; margin-top:50px;">Where is your store located?</p>
+  <input autocomplete='off' type="text" num='3' class="form-control pagecontent" id="Address" style="width:80%; margin:auto; margin-top:20px; text-align: center;" name="" value="" placeholder="Address">
+  <div class="row" style="position:absolute; bottom:30px; margin:auto; width:100%; ">
+    <button type="button" num='3' name="back" class="btn btn-warning back" style="width:100px; margin: 0 auto 0 auto; margin-top:30px;">Back</button>
+    <button type="button" num='3' name="okay!" class="btn btn-primary next" style="width:100px; margin: 0 auto 0 auto; margin-top:30px;display:none;">Next</button>
+  </div>
+</div>
+
+<!-- Panel 4 -->
+<div class="card panel" number='4' style="width:400px; height:300px; margin:auto; display:none;">
+  <p style="width:350px; margin: 0 auto 0 auto; margin-top:50px;">What would you like your custome URL to be?</p>
+  <label class="sr-only" for="URL">Username</label>
+  <div class="input-group mb-2 mt-4" style="width:80%; margin:auto;">
+    <div class="input-group-prepend">
+      <div class="input-group-text">Thirft.com/store/</div>
+    </div>
+    <input autocomplete='off' type="text" num='4' class="form-control pagecontent" id="URL" style="" name="" value="">
+
+  </div>
+  <div class="row" style="position:absolute; bottom:30px; margin:auto; width:100%; ">
+    <button type="button" num='4' name="back" class="btn btn-warning back" style="width:100px; margin: 0 auto 0 auto; margin-top:30px;">Back</button>
+    <button type="button" num='4' name="okay!" class="btn btn-primary next" style="width:100px; margin: 0 auto 0 auto; margin-top:30px; ">Next</button>
+  </div>
+</div>
+
+<!-- Panel 5 -->
+<div class="card panel" number='5' style="width:400px; height:300px; margin:auto; display:none;">
+  <p style="width:300px; margin: 0 auto 0 auto; margin-top:50px;">Describe your store briefly</p>
+  <textarea autocomplete='off' type="text" num='5' resize="none" maxlength="120" rows='4' class="form-control pagecontent" id="description" style="resize:none; width:80%; margin:auto; margin-top:20px; text-align: center;" name="" value=""></textarea>
+  <div class="row" style="position:absolute; bottom:30px; margin:auto; width:100%; ">
+    <button type="button" num='5' name="back" class="btn btn-warning back" style="width:100px; margin: 0 auto 0 auto; margin-top:30px;">Back</button>
+    <button type="button" num='5' name="okay!" class="btn btn-primary next" style="width:100px; margin: 0 auto 0 auto; margin-top:30px; display:none;">Next</button>
+  </div>
+</div>
+
+<!-- Panel 6 -->
+<div class="card panel" number='6' style="width:400px; height:330px; margin:auto; display:none;">
+  <p style="width:300px; margin: 0 auto 0 auto; margin-top:30px;">Add some tags you think your store fits in</p>
+    <p class="text-muted"><i>ie: Books , Clothes, Furniture</i></p>
+
+    <div class="" style="margin-left: 90px;">
+    <input type="text" name="" value="" class="tags form-control lastfield" num='6' style=" height: 30px; margin-bottom:5px; width:70%" placeholder="Tag 1">
+    <input type="text" name="" value=""  class="tags form-control" style="height: 30px; margin-bottom:5px; width:70%" placeholder="Tag 2">
+    <input type="text" name="" value=""  class="tags form-control"  style=" height: 30px; margin-bottom:5px; width:70%" placeholder="Tag 3">
+    <input type="text" name="" value=""  class="tags form-control"  style="height: 30px; margin-bottom:5px; width: 70%" placeholder="Tag 4">
+  </div>
+
+    <div class="row" style="position:absolute; bottom:30px; margin:auto; width:100%; ">
+    <button type="button" num='6' name="back" class="btn btn-warning back" style="width:100px; margin: 0 auto 0 auto; margin-top:30px;">Back</button>
+    <button type="button" num='6' name="okay!" class="btn btn-primary next" id="submit" style="width:100px; margin: 0 auto 0 auto; margin-top:30px; display:none;">Next</button>
+  </div>
+</div>
+
+<!-- Panel 7 -->
+<div class="card panel" number='7' style="width:400px; height:330px; margin:auto; display:none;">
+  <div class="" id="loading-panel">
+    <h4 style="width:300px; margin: 0 auto 0 auto; margin-top:90px; ">Working</h4>
+    <div class="spinner-border text-primary" style="position:absolute; top:50%; left:46.5%;" role="status">
+  <span class="sr-only">Loading...</span>
+</div>
+</div>
+  <div class="" style="display:none;" id='done'>
+    <h4 style="margin-top:50px;">Hooray</h4>
+    <p style="width:200px; margin: 0 auto 0 auto; margin-top:20px;">You've just registered your store!</p>
+    <button type="button" name="okay!" class="btn btn-success" id='reload-page' style="width:100px; margin: 0 auto 0 auto; margin-top:30px;">Sweet!</button>
+
+  </div>
+
+  </div>
+
+
+
+
+
+<script type="text/javascript" src='{{url_for('static', filename='scripts/setup-store.js')}}'></script>
+
+{% endblock content %}

@@ -1,0 +1,15 @@
+Thrift Aggregation App:
+
+  1. Users:
+
+    There will be two types of users:
+    -Customer
+    -Store
+
+    User object:
+      id, username, email, password +
+      Business - boolean
+      Store - relationship - Store object
+
+    Store object:
+      id, name
