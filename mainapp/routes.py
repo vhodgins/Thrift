@@ -6,7 +6,9 @@ import re
 from haversine import haversine, Unit
 from geopy.geocoders import Nominatim
 import geocoder
-
+import secrets
+import os
+from PIL import Image
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -14,7 +16,8 @@ def home():
         if current_user.business and not current_user.store:
             return redirect('store')
         else:
-            return render_template('feed.html')
+            items = Item.query.limit(10).all()
+            return render_template('feed.html', page='feed', items=items)
     else:
         return render_template('home.html', page='home')
 
@@ -138,13 +141,10 @@ def check_following():
     following = Follow.query.filter_by(user=current_user.id, store=request.form['id']).first()
     if following:
         db.session.delete(following)
-        db.session.commit()
-        return jsonify({'result' : 'Follow'})
+        return jsonify({'result' : 'unfollowing'})
     else:
-        f = Follow(user=current_user.id, store=request.form['id'])
-        db.session.add(f)
-        db.session.commit()
-        return jsonify({'result' : 'Unfollow'})
+        f = Follow
+        return jsonify({'result' : ''})
 
 
 
@@ -173,6 +173,37 @@ def global_store(store_url):
         f = len(f)
         return render_template('store.html', store=store, page='store', followers=f, following=following)
 
-@app.route('/new_item', methods=['GET', 'POST'])
+@app.route('/new_item', methods=['GET','POST'])
 def new_item():
     return render_template('newitem.html', page='newitem')
+
+def save_pic(form_picture):
+    random_hex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(form_picture.filename)
+    picture_fn = random_hex + f_ext
+    picture_path = os.path.join(app.root_path, 'static\\items', picture_fn)
+    output_size = (250,250)
+    i = Image.open(form_picture)
+    i.thumbnail(output_size)
+    i.save(picture_path)
+    return [picture_fn , i]
+
+@app.route('/newItemUpload', methods=['GET', 'POST'])
+def newItemUpload():
+    if request.method == 'POST':
+        if request.files:
+            image = request.files['image']
+            img = save_pic(image)
+            width, height = img[1].size
+            print(width)
+            print(height)
+            tags = [request.form['tag1'], request.form['tag2'], request.form['tag3']]
+            tags = ', '.join(tags)
+            it = Item(description=request.form['description'], img=img[0], store=current_user.store[0].id, tags=tags, img_width = width, img_height=height)
+            db.session.add(it)
+            db.session.commit()
+
+
+
+
+    return redirect('store')

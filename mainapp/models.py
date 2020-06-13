@@ -57,6 +57,8 @@ class Item(db.Model):
     description = db.Column(db.String(60), nullable=False)
     type = db.Column(db.String(60), nullable=True)
     img = db.Column(db.String(60), nullable=False, default='item.jpg')
+    img_width = db.Column(db.Integer, nullable=False)
+    img_height = db.Column(db.Integer, nullable=False)
     store = db.Column(db.Integer, db.ForeignKey('store.id'), nullable=False)
     tags = db.Column(db.String(1024), nullable=True)
 

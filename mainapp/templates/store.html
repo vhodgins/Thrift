@@ -1,6 +1,9 @@
 {% extends 'layout.html' %}
 {% block content %}
 <style media="screen">
+  .item-button:hover div {
+    background-color: rgb(221, 240, 234);
+  }
 </style>
 
 <div class="" >
@@ -10,28 +13,57 @@
   <div class="row" style=" position:relative; top:-250px; background: linear-gradient(to bottom, rgba(231, 72, 46, .0) 0%, rgb(231, 72, 46) 65%); height:250px;">
     <p style="position:absolute; bottom:10px; left:30px; color:white; font-family: calibri;">
       <span style="font-size:24pt; ">{{store.name}}</span>
-      <span style="margin-left:20px; font-size:12pt;"><i style="margin-right:10px;">{{store.items|length}} Items</i></span>
-      <span style="margin-left:20px; font-size:12pt;"><i>{{followers}} followers</i></span>
+      <span style="margin-left:20px; font-size:12pt;">{{store.address}}</span>
+      <span style="margin-left:20px; font-size:12pt;">{{store.items|length}} Items</span>
+      <span style="margin-left:20px; font-size:12pt;"><span id="followcount">{{followers}}</span> followers</span>
     </p>
     <div style="position:absolute; bottom:15px; width:96%; left:2%; background:white; height:2px;">
     </div>
     <button  class="btn btn-sm btn-info " style="position:absolute; right:50px; bottom:35px;border-radius:3px;" store="{{store.id}}" id="follow-button">{% if following %}Unfollow{% else %} Follow{% endif %}</button>
 
   </div>
-  <div class="row" style=";background: rgb(231, 72, 46); height:400px; margin-top:-249.9px;">
+  <div class="row" style=";background: rgb(231, 72, 46);  margin-top:-249.9px; margin-bottom:50px; border-radius: 0 0 10px 10px; ">
+    <div class="items container" style="margin-left:90px;">
+
+    {% if not store.items %}
+    <div class="" style="margin-left:-90px; margin-top:40px;">
+
+      <h3 style="color: white; text-align:center; font-weight:400">Nothing here yet..</h3>
+    </div>
+
+    {% endif %}
 
     {% for item in store.items %}
+    <a  name='{{item.id}}' type="button" name="button" class="item-button" style="margin:10px; color: inherit">
+    <div class="card " style="">
+      <img src="{{url_for('static', filename='items/' + item.img)}}" alt="" height="{{item.img_height}}" width="{{item.img_width}}" style="margin: {{(250-item.img_height)/2}}px {{(250-item.img_width)/2}}px {{(250-item.img_height)/2}}px {{(250-item.img_width)/2}}px ;  border-radius:5px;" >
+      <h5 class="ml-3">{{item.description}}</h5>
+      <p>{{(250-item.img_height)/2}} {{(250-item.img_width)/2}} {{(250-item.img_height)/2}}{{(250-item.img_width)/2}}</p>
 
+    </div>
+  </a>
     {% endfor %}
+    <section style="height:50px;"></section>
   </div>
-  <div class="row" style=";background: rgb(231, 72, 46); height:100px; margin-top:-50px; border-radius:10px; margin-bottom:50px;">
+</div>
 
-  </div>
 
 </div>
 
 
 <script type="text/javascript">
+  $(document).ready(function(){
+      let num = $('#followcount').text();
+      if (num>999999) {
+        num = String((num / 1000000).toFixed(1) + 'M')
+      }
+      if (num>999) {
+        num = String((num / 1000).toFixed(1) + 'K');
+      }
+      $('#followcount').text(num);
+  })
+
+
   $('#follow-button').click(function(){
     req = $.ajax({
       url : '/check_following',

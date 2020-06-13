@@ -24,12 +24,14 @@
 </div>
 
 <!-- Panel 3 -->
-<div class="card panel" number='3' style="width:400px; height:300px; margin:auto; display:none;">
+<div class="card panel" number='3' style="width:400px; height:350px; margin:auto; display:none;">
   <p style="width:300px; margin: 0 auto 0 auto; margin-top:50px;">Where is your store located?</p>
-  <input autocomplete='off' type="text" num='3' class="form-control pagecontent" id="Address" style="width:80%; margin:auto; margin-top:20px; text-align: center;" name="" value="" placeholder="Address">
+  <input autocomplete='off' type="text" num='3' class="form-control typing" id="Address" style="width:80%; margin:auto; margin-top:20px; text-align: center;" name="" value="" placeholder="Address">
+  <input autocomplete='off' type="text" num='3' class="form-control typing" id="City" style="width:80%;  margin:auto; margin-top:-80px;  text-align: center;" name="" value="" placeholder="City">
+  <input autocomplete='off' type="text" num='3' class="form-control typing" id="State" style="width:80%;   margin:auto; margin-top:-80px; text-align: center;" name="" value="" placeholder="State">
   <div class="row" style="position:absolute; bottom:30px; margin:auto; width:100%; ">
     <button type="button" num='3' name="back" class="btn btn-warning back" style="width:100px; margin: 0 auto 0 auto; margin-top:30px;">Back</button>
-    <button type="button" num='3' name="okay!" class="btn btn-primary next" style="width:100px; margin: 0 auto 0 auto; margin-top:30px;display:none;">Next</button>
+    <button type="button" num='3' name="okay!" class="btn btn-primary next" id='nextbuttonaddress' style="width:100px; margin: 0 auto 0 auto; margin-top:30px;display:none;">Next</button>
   </div>
 </div>
 
@@ -56,7 +58,7 @@
   <textarea autocomplete='off' type="text" num='5' resize="none" maxlength="120" rows='4' class="form-control pagecontent" id="description" style="resize:none; width:80%; margin:auto; margin-top:20px; text-align: center;" name="" value=""></textarea>
   <div class="row" style="position:absolute; bottom:30px; margin:auto; width:100%; ">
     <button type="button" num='5' name="back" class="btn btn-warning back" style="width:100px; margin: 0 auto 0 auto; margin-top:30px;">Back</button>
-    <button type="button" num='5' name="okay!" class="btn btn-primary next" style="width:100px; margin: 0 auto 0 auto; margin-top:30px; display:none;">Next</button>
+    <button type="button" num='5' name="okay!" class="btn btn-primary next" id="addressbtn" style="width:100px; margin: 0 auto 0 auto; margin-top:30px; display:none;">Next</button>
   </div>
 </div>
 
@@ -96,6 +98,24 @@
   </div>
 
 
+<script type="text/javascript">
+  $('.typing').keyup(function(e){
+    if (($('#Address').val() && $('#City').val()) && $('#State').val()) {
+
+      if (e.which == 13) {
+        $('[number=3]').hide();
+        $('[number=4]').show(150);
+        $('.pagecontent').focus();
+
+      }
+
+      $('#nextbuttonaddress').show();
+    }
+    else {
+      $('#nextbuttonaddress').hide();
+    }
+  })
+</script>
 
 
 

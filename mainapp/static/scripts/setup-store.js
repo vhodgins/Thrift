@@ -7,13 +7,18 @@ $('#submit').click(function(){
   tags.push($(this).val());
 });
   tags = tags.join(' ');
+  let address = $('#Address').val();
+  let city = $('#City').val();
+  let state = $('#State').val()
+  address = [address, ', ', city,  ', ', state].join(' ');
+
   req = $.ajax({
     url : '/submit_store',
     type : 'POST',
     data :
     {
       name : data[0],
-      address : data[1],
+      address : address,
       url : $('#URL').val(),
       description : data[3],
       tags : tags
@@ -55,6 +60,7 @@ $('.next').click(function() {
   $('[number=' + num + ']').hide();
   $('[number=' + String(parseInt(num) + 1) + ']').show(150);
   $('.pagecontent').focus();
+  $('.typing').focus();
   data[num - 2] = $('.pagecontent[num=' + num + ']').val();
 }
   if (num=='4') {
@@ -104,6 +110,7 @@ $('.pagecontent').keypress(function(e) {
     $('[number=' + num + ']').hide();
     $('[number=' + String(parseInt(num) + 1) + ']').show(150);
     $('.pagecontent').focus();
+    $('#Address').focus();
     data[num - 2] = $('.pagecontent[num=' + num + ']').val();
   }
     if (num=='4') {
