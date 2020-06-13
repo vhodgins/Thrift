@@ -12,28 +12,42 @@
 </head>
 
 <body>
-  <nav class="navbar sticky-top" style="background:rgb(199,0,57) ">
+  <nav class="navbar fixed-top" style="background:rgb(199,0,57) ">
     <div class="container">
       <div class="row justify-content-md-center" style='width:100%'>
 
-        <div class="col col-lg-4 col-2">
+        <div class="col">
+          <a href="{{url_for('home')}}" style="text-decoration:none;">
           <h5 style="color:white;">Thirft</h5>
+        </a>
         </div>
 
-        <div class="col col-lg-4 col-4">
-          <input type="text" autocomplete="off" style="background:white; border:none; border-radius:5px; width:350px; margin:auto; margin-left:30px; text-align:center;" name="search" value="" placeholder="Search">
+        <div class="col  mr-4">
+          <input type="text" autocomplete="off" style="background:white; border:none; border-radius:5px; width:100%; margin:auto; margin-left:30px; text-align:center;" name="search" value="" placeholder="Search">
         </div>
 
-        <div class="col col-lg-4 col-5">
+        <div class="col ">
 
           <div class="row  justify-content-md-end">
               {% if page!='store' %}
-              <a href="{{url_for('store')}}" style="position:relative; right:10px; color:rgb(255, 235, 219); margin-top:5px;">
-              <h6>{%if current_user.business%}Store{% else %}Profile{% endif %}</h6>
+              {%if current_user.business%}
+              <a href="{{url_for('new_item')}}" style="position:relative; right:40px; color:white; margin-top:5px;"><h6>New Item</h6></a>
+              <a href="{{url_for('store')}}" style="position:relative; right:10px; color:white; margin-top:5px;">
+              <h6>Store</h6>
             </a>
               {% else %}
-              <a href="{{url_for('logout')}}" style="position:relative; right:10px; color:rgb(255, 235, 219); margin-top:5px;">
-              <h6>Logout</h6>
+
+              <a href="{{url_for('settings')}}" style="position:relative; right:10px; color:white; margin-top:5px;">
+              <h6>Settings</h6>
+            </a>
+
+              {% endif %}
+              {% else %}
+              {% if current_user.business %}
+              <a href="{{url_for('new_item')}}" style="position:relative; right:40px; color:white; margin-top:5px;"><h6>New Item</h6></a>
+              {% endif %}
+              <a href="{{url_for('settings')}}" style="position:relative; right:10px; color:white; margin-top:5px;">
+              <h6>Settings</h6>
                 </a>
               {% endif %}
 
@@ -43,13 +57,14 @@
 
     </div>
   </nav>
+
   {% if page=='store' %}
   <div class="container">
   {% else %}
   <div class="container">
   {% endif %}
 
-    <div class="buffer" style="height:30px;"></div>
+    <div class="buffer" style="height:60px;"></div>
     {% block content %}
     {% endblock %}
   </div>

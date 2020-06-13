@@ -22,7 +22,7 @@ $('#register').submit(function(e) {
         window.location.href = document.location.href + 'store';
       }
       if (b=='false') {
-        window.location.href = document.location.href + 'profile'
+        window.location.reload();
       }
 
     }

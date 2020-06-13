@@ -1,0 +1,184 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<style media="screen">
+  .setting {
+
+    margin-top: 5px;
+  }
+
+  .setting p {
+    margin-left:20px;
+    margin-top: 5px;
+  }
+
+  .s-link-a {
+    color: inherit;
+
+  }
+
+  .s-link-a:hover{
+    text-decoration:none;
+  }
+
+  .s-link {
+    margin-top: 0px;
+    height:50px;
+    margin-left:-16px;
+  }
+
+  .s-link p{
+    margin-top:10px;
+  }
+
+
+  .s-link:hover{
+    color: rgb(91, 91, 91);
+    text-decoration:none;
+    animation-name: darken;
+    animation-duration: 150ms;
+    animation-fill-mode:forwards;
+  }
+
+  @keyframes darken {
+    0% {
+
+    }
+    100% {
+      background-color: rgb(192, 194, 193)
+    }
+  }
+
+  button {
+    border:none;
+    background:inherit;
+    margin-left:-7px;
+    margin-top:0px;
+    margin-bottom:-1px;
+    width: 104%;
+    margin-right:-10px;
+      }
+
+    input {
+      border:1px solid rgb(198, 198, 198);
+      border-radius:5px;
+    }
+
+    a:hover {
+      cursor: pointer;
+    }
+
+
+</style>
+
+
+<div class="card" style="margin-top:20px;">
+<div class="row">
+  <div class="col col-lg-4 col-2  " style="border-right:1px solid rgb(187, 187, 187); background-color: rgb(245, 245, 245); margin-left:15px; ">
+
+    <a name="#" class="s-link-a" type='user' >
+      <div class="row setting s-link" style="margin-top:-1px; height:50px; border-radius:5px 0 0 0;">
+        <p >User</p>
+      </div>
+    </a>
+
+
+    {% if current_user.business %}
+    <a name="#" class='s-link-a'style="margin-bottom:0px;" type='store'>
+      <div class="row setting s-link" style="margin-top:0px;">
+        <p class="">Store</p>
+      </div>
+    </a>
+    {% endif %}
+
+    <a name="#" class='s-link-a' type='pref'>
+    <div class="row setting s-link" style="margin-top:0px;">
+      <p>Preferences</p>
+    </div>
+    </a>
+
+    <a name="#" class='s-link-a'style="margin-bottom:0px;" type='logout'>
+    <div class="row setting s-link" style="margin-top:0px;">
+      <p class="text-danger">Logout</p>
+    </div>
+    </a>
+
+
+    <hr style="margin-top:5px;">
+
+  </div>
+  <div class="col col-lg-7 col-8" style="height:85vh; ">
+
+    <div class="m-3 setting-data" id="user">
+      <h3 style="font-weight:200;">User </h3>
+      <hr style="margin-top:-2px; width:110%;">
+
+      <p style="width:100%; margin-bottom:0px;">Name</p>
+      <input type="text" name="" class="form-control" style="width:50%;" value="{% if current_user.name %}{{current_user.name}}{% endif %}">
+
+      <p style="width:100%; margin-bottom:0px; margin-top:20px;">Username</p>
+      <input type="text" name="" class="form-control" style="width:50%" value="{{current_user.username}}">
+
+      <p style="width:100%; margin-bottom:0px; margin-top:20px;">Location: <span style="color:rgb(55, 40, 145); font-weight:500;" id='loc'></span></p>
+
+
+    </div>
+
+    {% if current_user.business %}
+    <div class="m-3 setting-data" id="store" style="display:none;">
+      <h3 style="font-weight:200;">Store</h3>
+      <hr style="margin-top:-2px; width:110%;">
+      <p style="margin-top:20px;">Name: <span style="position:absolute; left:100px;">{{current_user.store[0].name}}</span></p>
+      <p>URL:    <a href="{{url_for('store', store_url='/'+current_user.store[0].url)}}" style="position:absolute; left:90px;" class="ml-2">/{{current_user.store[0].url}}</a></p>
+      <p>Address:  {{current_user.store[0].address}}</p>
+    </div>
+    {% endif %}
+
+
+    <div class="m-3 setting-data" id="pref" style="display:none;">
+      <h3 style="font-weight:200;">Preferences</h3>
+      <hr style="margin-top:-2px; width:110%;">
+    </div>
+
+    <div class="m-3 setting-data" id="logout" style="display:none;">
+      <h3 style="font-weight:200;">Logout</h3>
+      <hr style="margin-top:-2px; width:110%;">
+      <div class="row ml-1">
+      <p>Are you sure?</p>
+      <a href="{{url_for('logout')}}" class="" style="margin-left:20px; color:rgb(210, 59, 85); font-weight:500;">Yes</a>
+    </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+
+      $.get('https://www.cloudflare.com/cdn-cgi/trace', function(data) {
+        let d = data.split('\n');
+        let ip = d[2].split('=')[1];
+        req = $.ajax({
+          url : '/get_location',
+          type : 'POST',
+          data : {ip : ip }
+        });
+        req.done(function(data){
+          let location = data.location;
+          $('#loc').text(location);
+        });
+      })
+    })
+
+
+    $('.s-link-a').click(function(){
+      $(this).blur();
+      let type = $(this).attr('type');
+      $('.setting-data').hide();
+      $('#' + type).fadeIn(150);
+    })
+
+</script>
+
+{% endblock content %}

@@ -1,0 +1,30 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="row mt-4">
+  <div class="col col-md-6">
+    <div class="card" style="height:600px;">
+      <h3 style="font-weight:200; margin:auto; margin-top: 150px;">Add Image</h3>
+      <img src="" alt="" style="">
+    </div>
+  </div>
+  <div class="col col-md-5">
+    <div class="card" style="margin-top:100px;">
+      <div class="m-3">
+        <form class="" action="index.html" method="post">
+
+        <label for="" style="width:100%; margin-bottom:0px;">Description</label>
+        <input type="text" class="form-control" name="" value="" style="margin-bottom:20px;" placeholder="Description">
+
+        <label for="" style="width:100%; margin-bottom:3px;">Tags</label>
+        <input type="text" class="form-control" name="" value="" style="margin-bottom:5px; height:30px; width:50%;" placeholder="Tag 1">
+        <input type="text" class="form-control" name="" value="" style="margin-bottom:5px; height:30px; width:50%;" placeholder="Tag 2">
+        <input type="text" class="form-control" name="" value="" style="margin-bottom:5px; height:30px; width:50%;" placeholder="Tag 3">
+
+        <input type="submit" name="" value="Post" class="btn btn-success" style="position:absolute; right:20px; bottom:21px; width:100px;">
+      </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

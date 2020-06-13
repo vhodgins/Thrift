@@ -3,15 +3,46 @@
 <style media="screen">
 </style>
 
-<div class="" style=" background:white;">
+<div class="" >
   <div class="row">
-    <img src="https://www.duluthtrading.com/on/demandware.static/-/Sites/default/dwec506700/images/stores/Franklin-TN-store.jpg" style="width:100%; height:500px;" alt="">
+    <img src="https://www.duluthtrading.com/on/demandware.static/-/Sites/default/dwec506700/images/stores/Franklin-TN-store.jpg" style="border-radius:10px;width:100%; height:490px;" alt="">
   </div>
-  <div class="row bg-light">
-    <h1>{{store.name}}</h1>
+  <div class="row" style=" position:relative; top:-250px; background: linear-gradient(to bottom, rgba(231, 72, 46, .0) 0%, rgb(231, 72, 46) 65%); height:250px;">
+    <p style="position:absolute; bottom:10px; left:30px; color:white; font-family: calibri;">
+      <span style="font-size:24pt; ">{{store.name}}</span>
+      <span style="margin-left:20px; font-size:12pt;"><i style="margin-right:10px;">{{store.items|length}} Items</i></span>
+      <span style="margin-left:20px; font-size:12pt;"><i>{{followers}} followers</i></span>
+    </p>
+    <div style="position:absolute; bottom:15px; width:96%; left:2%; background:white; height:2px;">
+    </div>
+    <button  class="btn btn-sm btn-info " style="position:absolute; right:50px; bottom:35px;border-radius:3px;" store="{{store.id}}" id="follow-button">{% if following %}Unfollow{% else %} Follow{% endif %}</button>
+
+  </div>
+  <div class="row" style=";background: rgb(231, 72, 46); height:400px; margin-top:-249.9px;">
+
+    {% for item in store.items %}
+
+    {% endfor %}
+  </div>
+  <div class="row" style=";background: rgb(231, 72, 46); height:100px; margin-top:-50px; border-radius:10px; margin-bottom:50px;">
+
   </div>
 
 </div>
 
+
+<script type="text/javascript">
+  $('#follow-button').click(function(){
+    req = $.ajax({
+      url : '/check_following',
+      type: 'POST',
+      data : { id : $('#follow-button').attr('store')}
+    });
+    req.done(function(data){
+      $('#follow-button').text(data.result);
+    })
+
+  })
+</script>
 
 {% endblock content %}

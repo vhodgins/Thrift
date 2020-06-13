@@ -4,6 +4,8 @@ from mainapp import app, db, bcrypt
 from flask_login import login_user, current_user, logout_user, login_required
 import re
 from haversine import haversine, Unit
+from geopy.geocoders import Nominatim
+import geocoder
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -11,7 +13,11 @@ def home():
     if current_user.is_authenticated:
         if current_user.business and not current_user.store:
             return redirect('store')
-    return render_template('home.html', page='home')
+        else:
+            return render_template('feed.html')
+    else:
+        return render_template('home.html', page='home')
+
 
 
 @app.route('/register_account', methods=['POST'])
@@ -67,7 +73,7 @@ def store():
         if not u.store:
             return render_template('setup_store.html', page='setup_store')
         if u.store:
-            return render_template('store.html', store=u.store[0], page='store')
+            return redirect(url_for('global_store', store_url=u.store[0].url))
 
 
 
@@ -94,6 +100,54 @@ def url_exists():
         return jsonify({'result': ''})
 
 
+@app.route('/get_location', methods=['POST'])
+def get_location():
+    try:
+        geolocator = Nominatim()
+        ip = request.form['ip']
+        g = geocoder.ip(ip).latlng
+        location = geolocator.reverse(g).address
+    except:
+        return jsonify({'result' : 'failure'})
+    if location:
+        location = location.split(',')
+        location = ','.join([location[-3], location[-2]])
+        return jsonify({'location': location})
+
+
+
+@login_required
+@app.route('/settings', methods=['GET', 'POST'])
+def settings():
+    g = geocoder.ip('me').latlng
+    geolocator = Nominatim()
+    location = False
+    try:
+        location = geolocator.reverse(g).address
+    except:
+        return redirect(url_for('settings'))
+    location = location.split(',')
+    location = {
+        'State' : location[-3],
+        'Zip'   : location[-2]
+    }
+    return render_template('settings.html', page='settings', location=location)
+
+@app.route('/check_following', methods=['POST'])
+def check_following():
+    following = Follow.query.filter_by(user=current_user.id, store=request.form['id']).first()
+    if following:
+        db.session.delete(following)
+        db.session.commit()
+        return jsonify({'result' : 'Follow'})
+    else:
+        f = Follow(user=current_user.id, store=request.form['id'])
+        db.session.add(f)
+        db.session.commit()
+        return jsonify({'result' : 'Unfollow'})
+
+
+
 @app.route('/submit_store', methods=['POST'])
 def submit_store():
     name = request.form['name']
@@ -113,4 +167,12 @@ def global_store(store_url):
     if not store:
         return render_template('404.html', page='404')
     else:
-        return render_template('store.html', store=store, page='store')
+        following = Follow.query.filter_by(user=current_user.id, store=store.id).first()
+        store = Store.query.filter_by(url=store_url).first()
+        f = Follow.query.filter_by(store=store.id).all()
+        f = len(f)
+        return render_template('store.html', store=store, page='store', followers=f, following=following)
+
+@app.route('/new_item', methods=['GET', 'POST'])
+def new_item():
+    return render_template('newitem.html', page='newitem')
