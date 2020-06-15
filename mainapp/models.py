@@ -1,7 +1,7 @@
 from mainapp import db, login_manager
 from datetime import datetime, timezone
 from flask_login import UserMixin
-from geoalchemy2 import Geometry
+
 
 
 

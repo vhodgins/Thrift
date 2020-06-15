@@ -3,7 +3,6 @@ from flask import escape, render_template, request, url_for, flash, redirect, ab
 from mainapp import app, db, bcrypt
 from flask_login import login_user, current_user, logout_user, login_required
 import re
-from haversine import haversine, Unit
 from geopy.geocoders import Nominatim
 import geocoder
 import secrets

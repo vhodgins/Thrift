@@ -4,7 +4,7 @@
 <form class="" action='{{url_for("newItemUpload")}}' style="width:100%;" method="POST" enctype="multipart/form-data">
 <div class="row mt-4">
   <div class="col col-xl-6 col-12" style="margin-bottom:0px;">
-    <div class="card" style="height:60vh;">
+    <div class="card" style="height:60vh; border-radius:10px;">
       <h3 style="font-weight:200; margin:auto; margin-top: 150px;" id="addimg">Add Image</h3>
       <div class style="">
         <input type="file" name="image" accept="image/*" onchange="loadFile(event)" style="display:none;" id="imginp">
@@ -14,9 +14,10 @@
     <img id="output" style="margin:auto; border-radius:10px;"  />
       <img src="" alt="" style="">
     </div>
+    <div class="card" id="newuploadtab" style="display:none; height: 50px; width:150px; right:15px; margin-top:-10px; position:absolute; border-top:none; border-left:none;"></div>
   </div>
   <div class="col col-xl-5 col-12" style="margin-top:-70px;">
-    <div class="card" style="margin-top:100px;">
+    <div class="card" style="margin-top:100px; border-radius:10px;">
       <div class="m-3">
 
         <label for="" style="width:100%; margin-bottom:0px;">Description</label>
@@ -34,9 +35,26 @@
 </div>
 </form>
 
+
 <script type="text/javascript">
   var loadFile = function(event) {
     var output = document.getElementById('output');
+    var fullPath = document.getElementById('imginp').value;
+    if (fullPath) {
+    var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+    var filename = fullPath.substring(startIndex);
+    if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
+        filename = filename.substring(1);
+    }
+    }
+
+    let ext = filename.split('.')[filename.split('.').length -1];
+    allowed_extensions = ['jpg', 'png', 'jpeg'];
+
+    if (allowed_extensions.includes(ext)) {
+
+
+
     output.src = URL.createObjectURL(event.target.files[0]);
     output.onload = function() {
       if (this.height > this.width) {
@@ -47,19 +65,22 @@
         $('#output').attr('height', '');
         $('#output').attr('width', '90%');
       }
+      $('#newuploadtab').show();
       $('#uploadimglabel').css('position', 'absolute');
-      $('#uploadimglabel').css('bottom', '30px');
-      $('#uploadimglabel').css('right', '20px');
+      $('#uploadimglabel').css('bottom', '-30px');
+      $('#uploadimglabel').css('right', '17px');
       $('#uploadimglabel').text('Upload New');
       URL.revokeObjectURL(output.src);
      // free memor
     }
     $('#addimg').hide();
+    }
+    else {
+      alert('The file must be an image');
+    }
 
   };
 </script>
-<script type="text/javascript">
 
-</script>
 
 {% endblock content %}
