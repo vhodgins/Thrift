@@ -91,9 +91,7 @@ appearance: button; /* CSS3 */
 
 
 @keyframes darken {
-  0%{
-    background:inherit;
-  }
+
   100% {
     background: rgb(196, 230, 178);
   }

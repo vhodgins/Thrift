@@ -61,6 +61,7 @@ class Item(db.Model):
     img_height = db.Column(db.Integer, nullable=False)
     store = db.Column(db.Integer, db.ForeignKey('store.id'), nullable=False)
     tags = db.Column(db.String(1024), nullable=True)
+    time_left = db.Column(db.Integer, nullable=False, default=7)
 
     def __repr__(self):
-        return f"Item('{self.description}, {self.type}')"
+        return f"Item('{self.description}, {self.type}, {self.time_left}')"

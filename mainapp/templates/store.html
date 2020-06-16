@@ -6,6 +6,10 @@
   }
 </style>
 
+{% if store == current_user.store[0]%}
+
+{% endif %}
+
 <div class="" >
   <div class="row">
     <img src="https://www.duluthtrading.com/on/demandware.static/-/Sites/default/dwec506700/images/stores/Franklin-TN-store.jpg" style="border-radius:10px;width:100%; height:490px;" alt="">
@@ -35,11 +39,12 @@
 
     {% for item in store.items %}
     <a  name='{{item.id}}' type="button" name="button" class="item-button" style="margin:10px; color: inherit">
-    <div class="card " style="">
-      <img src="{{url_for('static', filename='items/' + item.img)}}" alt="" height="{{item.img_height}}" width="{{item.img_width}}" style="margin: {{(250-item.img_height)/2}}px {{(250-item.img_width)/2}}px {{(250-item.img_height)/2}}px {{(250-item.img_width)/2}}px ;  border-radius:5px;" >
-      <h5 class="ml-3">{{item.description}}</h5>
-
-
+    <div class="card " style="width:{{item.img_width/2 + 20}}px; ">
+      <img src="{{url_for('static', filename='items/' + item.img)}}" alt="" height="{{item.img_height/2}}px" width="{{item.img_width/2}}px" style="margin-left:10px; margin-top:10px;  border-radius:5px;" >
+      <h5 class="text-center">{{item.description}}</h5>
+    {% if current_user.store[0] == store %}
+    <button type="button" name="{{item.id}}" class="btn btn-danger btn-sm deletebutton" style="position:absolute; border:2px solid black;">Delete</button>
+    {% endif %}
     </div>
   </a>
     {% endfor %}
@@ -52,6 +57,19 @@
 
 
 <script type="text/javascript">
+  $('.deletebutton').click(function(){
+    let id = $(this).attr('name');
+    req = $.ajax({
+      url : '/delete_item',
+      type: 'POST',
+      data : {id:id}
+    })
+
+    req.done(function(){
+      window.location.reload();
+    })
+  })
+
   $(document).ready(function(){
       let num = $('#followcount').text();
       if (num>999999) {

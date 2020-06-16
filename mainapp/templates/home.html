@@ -30,6 +30,10 @@
         </div>
       </div>
 
+      <div class="card" id="bademail" style="z-index: 100; display:none; position:absolute; top:45%; left:45%">
+        <h5 style="width:100%; margin:10px;" id="error"></h5>
+          <a name='poop' style="width:100px; margin:auto; margin-bottom:10px;" class="btn btn-warning" id="warningbutton">Okay</a>
+      </div>
 
       {% include 'loginform.html' %}
       {% include 'registerform.html' %}
@@ -40,8 +44,91 @@
 
   </div>
 
+<script type="text/javascript">
+$('#register').submit(function(e) {
+  let b = $(this).find('input[name="type"]:checked').val();
+  e.preventDefault();
+  let email = String($(this).find('input[name=email]').val());
+  if (((email).includes('@')) && (email.split('@')[email.split('@').length -1].includes('.'))) {
+  req = $.ajax({
+    url: 'register_account',
+    type: 'POST',
+    data: {
+      email: $(this).find('input[name="email"]').val(),
+      username: $(this).find('input[name="name"]').val(),
+      password: $(this).find('input[name="password"]').val(),
+      business: $(this).find('input[name="type"]:checked').val(),
+      remember: $(this).find('input[name="remember"]').prop('checked')
+    }
+  });
 
-  <script src="{{url_for('static', filename='scripts/loginlogic.js')}}" type="text/javascript"></script>
+  req.done(function(data) {
+    if (data.failure) {
+      $('#error').text("The " + data.failure + " you've chosen is already taken");
+      $('#bademail').show(100);
+      $('#warningbutton').focus();
+    }
+    else {
+      if (b=='true'){
+        window.location.href = document.location.href + 'store';
+      }
+      if (b=='false') {
+        window.location.reload();
+      }
+
+    }
+  })
+}
+else {
+  $('#error').text("The email you've chosen is invalid");
+  $('#bademail').show(100);
+  $('#warningbutton').focus();
+}
+});
+
+$('#warningbutton').click(function(){
+  $('#bademail').hide(100);
+})
+
+$('#login').submit(function(e) {
+  e.preventDefault();
+  req = $.ajax({
+    url: 'login',
+    type: 'POST',
+    data: {
+      username: $(this).find('input[name="name"]').val(),
+      password: $(this).find('input[name="password"]').val(),
+      remember: $(this).find('input[name="remember"]').prop('checked')
+    }
+  });
+
+  req.done(function(data) {
+    if (data.failure) {
+      $('#error').text("Sorry username or password is incorrect");
+      $('#bademail').show(100);
+      $('#warningbutton').focus();
+    }
+    else {
+
+      window.location = document.location.href + '/store';
+    }
+  })
+
+});
+
+$('#shift-to-register').click(function(){
+  $('#login').hide();
+  $('#register').show(150);
+});
+
+$('#shift-to-login').click(function(){
+  $('#register').hide();
+  $('#login').show(150);
+});
+
+
+</script>
+<!--  <script src="{{url_for('static', filename='scripts/loginlogic.js')}}" type="text/javascript"></script> -->
 
 </body>
 
