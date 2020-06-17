@@ -1,6 +1,10 @@
 from mainapp import db, login_manager
 from datetime import datetime, timezone
 from flask_login import UserMixin
+from geopy import distance
+from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
+from sqlalchemy import and_
+from sqlalchemy.sql import func
 
 
 
@@ -20,6 +24,9 @@ class User(db.Model, UserMixin):
     business = db.Column(db.Boolean(), nullable=False)
     store = db.relationship('Store', backref='Owner', lazy=True)
     following = db.relationship('Follow', backref='Follower', lazy=True)
+    location = db.Column(db.String(120), nullable=False)
+    max_dist = db.Column(db.Integer, nullable=False, default=10)
+
 
 
 
@@ -33,7 +40,7 @@ class Store(db.Model):
     url = db.Column(db.String(60), unique=True, nullable=False)
     img = db.Column(db.String(60), nullable=False, default='store.jpg')
     address = db.Column(db.String(120), nullable=False)
-    location = db.Column(db.String(120), nullable=True)
+    location = db.Column(db.String(120), nullable=False)
     items = db.relationship('Item', backref='Store', lazy=True)
     owner = db.Column(db.Integer, db.ForeignKey('user.id') ,nullable=False)
     tags = db.Column(db.String(1024), nullable=True)
@@ -60,8 +67,30 @@ class Item(db.Model):
     img_width = db.Column(db.Integer, nullable=False)
     img_height = db.Column(db.Integer, nullable=False)
     store = db.Column(db.Integer, db.ForeignKey('store.id'), nullable=False)
-    tags = db.Column(db.String(1024), nullable=True)
+    tags = db.Column(db.String(60), nullable=True)
+    metatags = db.Column(db.String(1024), nullable=True)
     time_left = db.Column(db.Integer, nullable=False, default=7)
+    location = db.Column(db.String(120), nullable=False)
+    lat = db.Column(db.Float, nullable=False)
+    lng = db.Column(db.Float, nullable=False)
+
+    @hybrid_method
+    def lat_dist(self, lat, n):
+        return (abs(self.lat-lat)<n)
+
+    @lat_dist.expression
+    def lat_dist(cls, lat, n):
+        return (func.abs(cls.lat-lat)<n)
+
+    @hybrid_method
+    def lng_dist(self, lng, n):
+        return (abs(self.lng - lng)<n)
+
+    @lng_dist.expression
+    def lng_dist(cls, lng, n):
+        return func.abs(cls.lng - lng)<n
+
+
 
     def __repr__(self):
         return f"Item('{self.description}, {self.type}, {self.time_left}')"

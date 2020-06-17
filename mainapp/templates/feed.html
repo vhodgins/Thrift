@@ -64,27 +64,45 @@
 
 </style>
 
+{% if page=='search' %}
+<div style='width:100%'>
+  <div style="display:block; margin:auto; width:250px;">
+    <div class="row">
+    <a href="#" class="btn btn-info " id="itemsbutton" style="display: block; margin:auto; width:100px;">Items</a>
+    <a href="#" class="btn btn-info " id="storesbutton" style="display: block; margin:auto; width:100px;">Stores</a>
+  </div>
+  </div>
+</div>
+{% endif %}
 
-<div class="row mt-4 ">
+<div class="row mt-4 page-content " id="items">
 
   <div class="col-lg-2 col-12">
 
   </div>
 
   <div class="col col-lg-5 col-12  content center-block">
+    {% if page=='search' %}
+    {% if not items %}
+    <h3>Nothing came up from your search</h3>
+    {% endif %}
+    {% endif %}
 
     {% for item in items %}
+
 
 
     <div class="card " id="feedcontent" style="margin:auto; margin-bottom:20px; ">
       <h4 class="mt-2" id="post-heading" style="margin-left:20px; font-weight:200;">{{item.description}}</h4>
       <h5 class="mt-2" id="post-heading-mobile" style="margin-left:20px; font-weight:200;">{{item.description}}</h5>
+      <span class="location" style="position:absolute; right:20px; top:14px; font-weight:400; font-size:12pt;" index="{{loop.index}}" location="{{item.location}}" >{{loop.index}}</span>
       <div class="" style=" background-color: rgba(210, 210, 210, 0.61); width:100%; margin-left:-1px; margin-top:10px;">
         <hr style="margin-bottom:-10px; margin-top:-1px;">
         <img src="{{url_for('static', filename='items/' + item.img)}}" alt=""  width="80%" style="display: block; margin:auto  ; margin-top:10px; margin-bottom:10px; ">
         <hr style="margin-top:-10px; margin-bottom:-1px;">
       </div>
-      <a href="{{url_for('store_redirect', id=item.store)}}" style="margin-left:20px; margin-top:10px;">See store</a>
+      <a href="{{url_for('store_redirect', id=item.store)}}#{{item.id}}" style="margin-bottom:15px; margin-left:20px; margin-top:15px"  class="text-primary">See item in store</a>
+      <a href="https://www.google.com/maps/dir/{{current_user.location}}/{{item.location}}" target="_blank" style="position:absolute; right:20px; bottom:10px;" class="btn btn-success btn-sm">Navigate</a>
     </div>
 
 
@@ -93,9 +111,12 @@
 
 
   <div class="col-xs-4 col-xs-offset-1 sidebar-outer">
-    <div class="fixed card col-md-2">
+    <div class="fixed card col-md-2" >
       <h5 style="font-weight:200">My Stores</h5>
       <hr style="margin: -5px 0 0px 0">
+      {% if not mystores %}
+      <p class="text-center mt-2">You don't follow any stores yet.</p>
+      {% endif %}
       {% for store in mystores %}
       <a href="{{url_for('global_store', store_url=store.url)}}"  class="storesidebar">
         <div class="mt-1 mb-1 row" style="">
@@ -103,7 +124,7 @@
           <h5 style="">{{store.name}}</h5>
         </div>
         <div class="col ">
-          <p>{{store.items | length}} new items this week</p>
+          <p>{{store.items | length}} new items</p>
         </div>
 
         </div>
@@ -113,5 +134,97 @@
   </div>
 
 </div>
+
+{% if page=='search' %}
+<div class="page-content mt-5 row " id="stores" style="display:none;">
+  <div class="col-md-4 "></div>
+  <div class="col-md-4 mt-2 ">
+    <div class="row " style="display:inline-block;  width:100%;" >
+  {% if not stores %}
+  <h3>Nothing came up from your search</h3>
+  {% endif %}
+  {% for store in stores %}
+  <a href="{{url_for('store_redirect', id=store.id)}}">
+  <div class="card " style="width:100%;">
+    <div class="m-2">
+      <h2>{{store.name}}</h2>
+    <p >{{store.description}} , {{store.address}}</p>
+  </div>
+  </div>
+  </a>
+
+  {% endfor %}
+</div>
+</div>
+</div>
+{% endif %}
+
+<script type="text/javascript">
+
+  var lat = 0;
+  var lng = 0;
+  function getLocation(num1,num2) {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position){
+
+           lat = position.coords.latitude;
+           lng = position.coords.longitude;
+
+           for (let i = num1; i<=num2; i++) {
+             let itemcoords = $('.location[index=' + i + ']').attr('location');
+             let i_lat = itemcoords.split(',')[0];
+             let i_lng = itemcoords.split(',')[1];
+             let dist = getDistanceFromLatLon(lat,lng, i_lat, i_lng);
+             $('.location[index=' + i + ']').text(dist+ ' Mi');
+
+           }
+
+      });
+    }
+  }
+
+
+  function getDistanceFromLatLon(lat1,lon1,lat2,lon2) {
+    var R = 6371; // Radius of the earth in km
+    var dLat = deg2rad(lat2-lat1);  // deg2rad below
+    var dLon = deg2rad(lon2-lon1);
+    var a =
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+      Math.sin(dLon/2) * Math.sin(dLon/2)
+      ;
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    var d = R * c; // Distance in km
+    d = d*.62;
+    d = Math.round(d);
+    return d;
+  }
+
+  function deg2rad(deg) {
+    return deg * (Math.PI/180)
+  }
+
+  num1 = $('.location').first().attr('index');
+  num2 = $('.location').last().attr('index')
+  getLocation(num1,num2);
+
+</script>
+
+
+<script type="text/javascript">
+
+$('#itemsbutton').click(function(){
+  $('.page-content').hide();
+  $('#items').show();
+})
+
+$('#storesbutton').click(function(){
+  $('.page-content').hide();
+  $('#stores').show();
+})
+
+</script>
+
+
 
 {% endblock %}

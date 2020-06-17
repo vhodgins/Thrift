@@ -4,20 +4,45 @@
   .item-button:hover div {
     background-color: rgb(221, 240, 234);
   }
+
+  a:hover {
+    cursor:pointer;
+  }
+
+  #storepagemobile {
+    margin-right:0;
+  }
+  #changepic {
+    top:70px;
+  }
+
+  @media (max-width:425px){
+    #storepagemobile {
+      margin-right:-20%;
+      margin-top:40px;
+    }
+    #changepic{
+      top:110px;
+    }
+  }
 </style>
 
-{% if store == current_user.store[0]%}
 
-{% endif %}
 
-<div class="" >
+<div class="" style="" id="storepagemobile">
   <div class="row">
-    <img src="https://www.duluthtrading.com/on/demandware.static/-/Sites/default/dwec506700/images/stores/Franklin-TN-store.jpg" style="border-radius:10px;width:100%; height:490px;" alt="">
+    <img src="{{url_for('static', filename='store/' +store.img)}}" style="border-radius:10px;width:100%; height:490px;" alt="">
   </div>
+  {% if store == current_user.store[0]%}
+  <div id="changepic" style="position:absolute; z-index:100;  background:white; border-radius:5px; border:none; padding:5px;  text-align:right; ">
+      <a name="change-background" style="font-weight:500;">Change background</a>
+
+  </div>
+  {% endif %}
   <div class="row" style=" position:relative; top:-250px; background: linear-gradient(to bottom, rgba(231, 72, 46, .0) 0%, rgb(231, 72, 46) 65%); height:250px;">
     <p style="position:absolute; bottom:10px; left:30px; color:white; font-family: calibri;">
       <span style="font-size:24pt; ">{{store.name}}</span>
-      <span style="margin-left:20px; font-size:12pt;">{{store.address}}</span>
+      <a href="https://www.google.com/maps/dir/{{current_user.location}}/{{store.address}}" target="_blank"><span style="margin-left:20px; font-size:12pt;">{{store.address}}</span></a>
       <span style="margin-left:20px; font-size:12pt;">{{store.items|length}} Items</span>
       <span style="margin-left:20px; font-size:12pt;"><span id="followcount">{{followers}}</span> followers</span>
     </p>
@@ -38,11 +63,12 @@
     {% endif %}
 
     {% for item in store.items %}
-    <a  name='{{item.id}}' type="button" name="button" class="item-button" style="margin:10px; color: inherit">
+    <a  id='{{item.id}}'' name='{{item.id}}' type="button" name="button" class="item-button" style="margin:10px; color: inherit">
     <div class="card " style="width:{{item.img_width/2 + 20}}px; ">
       <img src="{{url_for('static', filename='items/' + item.img)}}" alt="" height="{{item.img_height/2}}px" width="{{item.img_width/2}}px" style="margin-left:10px; margin-top:10px;  border-radius:5px;" >
       <h5 class="text-center">{{item.description}}</h5>
-    {% if current_user.store[0] == store %}
+    {% if current_user.store[0].id == store.id %}
+
     <button type="button" name="{{item.id}}" class="btn btn-danger btn-sm deletebutton" style="position:absolute; border:2px solid black;">Delete</button>
     {% endif %}
     </div>
@@ -52,8 +78,45 @@
   </div>
 </div>
 
+  <div class="card" id="change-background" style="position:absolute; width:156px; border:none; top:90px; display:none;">
+
+      <form class="m-3" action="{{url_for('changebackground')}}"  id="backgroundForm" method="post" enctype="multipart/form-data">
+
+        <input type="file"  name="image" id="backimg" style="display:none" value="">
+        <label for="backimg" style="margin-top:-5px; margin-left:24px;" class="btn btn-info">Upload</label>
+
+    </form>
+    <button type="button" id="close-change-background" class="btn btn-danger"name="button">Nevermind</button>
+  </div>
+
 
 </div>
+
+<script type="text/javascript">
+  $('#backimg').change(function(){
+    $('#backgroundForm').submit();
+  })
+
+  $('#backgroundForm').submit(function(){
+    let name = $('#backimg').val()
+    let extensions = ['jpg', 'png', 'jpg'];
+    if (!(extensions.includes(name.split('.')[name.split('.').length -1]))) {
+      alert('File must be an image.');
+      e.preventDefaut();
+    }
+  });
+
+
+  $('a[name="change-background"]').click(function(){
+    $('#change-background').slideDown(100);
+  });
+
+  $('#close-change-background').click(function(){
+    $('#change-background').slideUp(150);
+  })
+
+</script>
+
 
 
 <script type="text/javascript">

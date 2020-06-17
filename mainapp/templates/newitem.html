@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-<form class="" action='{{url_for("newItemUpload")}}' style="width:100%;" method="POST" enctype="multipart/form-data">
+<form class="" action='{{url_for("newItemUpload")}}' id="item-form" style="width:100%;" method="POST" enctype="multipart/form-data">
 <div class="row mt-4">
   <div class="col col-xl-6 col-12" style="margin-bottom:0px;">
     <div class="card" style="height:60vh; border-radius:10px;">
@@ -24,9 +24,9 @@
         <input type="text" class="form-control" name="description" value="" style="margin-bottom:20px;" placeholder="Description">
 
         <label for="" style="width:100%; margin-bottom:3px;">Tags</label>
-        <input type="text" class="form-control" name="tag1" value="" style="margin-bottom:5px; height:30px; width:50%;" placeholder="Tag 1">
-        <input type="text" class="form-control" name="tag2" value="" style="margin-bottom:5px; height:30px; width:50%;" placeholder="Tag 2">
-        <input type="text" class="form-control" name="tag3" value="" style="margin-bottom:5px; height:30px; width:50%;" placeholder="Tag 3">
+        <input type="text" class="form-control tag" name="tag1" value="" style="margin-bottom:5px; height:30px; width:50%;" placeholder="Tag 1">
+        <input type="text" class="form-control tag" name="tag2" value="" style="margin-bottom:5px; height:30px; width:50%;" placeholder="Tag 2">
+        <input type="text" class="form-control tag" name="tag3" value="" style="margin-bottom:5px; height:30px; width:50%;" placeholder="Tag 3">
 
         <input type="submit" name="" value="Post" class="btn btn-success" style="position:absolute; right:20px; bottom:21px; width:100px;">
       </div>
@@ -34,6 +34,24 @@
   </div>
 </div>
 </form>
+
+
+<script type="text/javascript">
+  $('#item-form').submit(function(e){
+    if (!($('#imginp').val())) {
+      e.preventDefault();
+      alert('You Must Provide an Image')
+    }
+    for (let i=1; i<4; i++) {
+        if ($('input[name=tag'+ String(i) + ']').val().match(/[^a-zA-Z0-9]/g)) {
+          e.preventDefault();
+          alert('Tags cannot include special characters or spaces');
+          break;
+        }
+    }
+
+  })
+</script>
 
 
 <script type="text/javascript">

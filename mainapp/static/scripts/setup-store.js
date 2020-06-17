@@ -9,8 +9,9 @@ $('#submit').click(function(){
   tags = tags.join(' ');
   let address = $('#Address').val();
   let city = $('#City').val();
-  let state = $('#State').val()
-  address = [address, ', ', city,  ', ', state].join(' ');
+  let state = $('#State').val();
+  let zip = $('#Zip').val();
+  address = [address, city, state, zip].join(' ');
 
   req = $.ajax({
     url : '/submit_store',
