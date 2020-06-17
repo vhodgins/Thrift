@@ -1,0 +1,57 @@
+.sidebar-outer {
+  margin-top: 100px;
+  position: relative;
+}
+
+.fixed {
+  position: fixed;
+}
+
+a {
+  color: inherit;
+  text-decoration:none;
+}
+a:hover {
+  text-decoration:none;
+  color:inherit;
+}
+
+.storesidebar:hover {
+  animation-name: bg-dark;
+  animation-duration: 200ms;
+  animation-fill-mode:forwards;
+}
+
+@keyframes bg-dark {
+  0% {
+
+  }
+  100% {
+    background-color: rgba(192, 194, 193, .8)
+  }
+}
+body {
+  margin:0;
+}
+
+#post-heading-mobile {
+  display:none;
+}
+
+
+
+#feedcontent {
+  width:80%;
+}
+
+@media (max-width:900px){
+  #feedcontent {
+    width:100%;
+  }
+  #post-heading {
+    display:none;
+  }
+  #post-heading-mobile {
+    display:block;
+  }
+}

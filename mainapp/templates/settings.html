@@ -161,102 +161,13 @@
 </div>
 </div>
 
-<script type="text/javascript">
-  $('#maxdistform').submit(function(e){
-    $('#rangesaved').text('');
-    e.preventDefault();
-    var newmax = $('#max-dist').val();
-    console.log(newmax);
-    req = $.ajax({
-      url : '/update_max',
-      type : 'POST',
-      data : {newmax:newmax}
-    });
-
-    req.done(function(data){
-      $('#rangesaved').text('Saved!');
-      })
-
-  })
-</script>
+<script src="{{url_for('static', filename='scripts/changemaxdist.js')}}"></script>
 
 
 
-<script>
-
-var x = document.getElementById("demo");
-var lat = '';
-var lng = '';
-function getLocation() {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(showPosition);
-  } else {
-    x.innerHTML = "Geolocation is not supported by this browser.";
-  }
-}
-
-function showPosition(position) {
-   lat = position.coords.latitude;
-   lng = position.coords.longitude;
-   req = $.ajax({
-     url : '/get_loc',
-     type : 'POST',
-     data : {lat:lat , lng:lng}
-   })
-
-   req.done(function(data){
-     let location = data.location;
-     $('#loc').text(location);
-   })
-
-}
-
-getLocation();
+<script src="{{url_for('static', filename='scripts/getlocationsettings.js')}}"></script>
 
 
-req = $.ajax({
-  url : '/get_loc',
-  type : 'POST',
-  data : {lat:lat , lng:lng}
-})
-
-req.done(function(data){
-  let location = data.location;
-  $('#loc').text(location);
-})
-</script>
-
-
-<script type="text/javascript">
-  /*  $(document).ready(function(){
-
-    $.get('https://www.cloudflare.com/cdn-cgi/trace', function(data) {
-        let d = data.split('\n');
-        let ip = d[2].split('=')[1];
-        req = $.ajax({
-          url : '/get_location',
-          type : 'POST',
-          data : {ip : ip }
-        });
-        req.done(function(data){
-          let location = data.location;
-          $('#loc').text(location);
-
-        });
-      })
-    })*/
-
-
-
-
-
-    $('.s-link-a').click(function(){
-      $(this).blur();
-      let type = $(this).attr('type');
-      $('.setting-data').hide();
-      $('#' + type).fadeIn(150);
-    })
-
-</script>
+<script src={{url_for('static', filename='scripts/settingsmenu.js')}}></script>
 
 {% endblock content %}

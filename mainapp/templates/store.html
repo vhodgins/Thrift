@@ -1,31 +1,6 @@
 {% extends 'layout.html' %}
 {% block content %}
-<style media="screen">
-  .item-button:hover div {
-    background-color: rgb(221, 240, 234);
-  }
-
-  a:hover {
-    cursor:pointer;
-  }
-
-  #storepagemobile {
-    margin-right:0;
-  }
-  #changepic {
-    top:70px;
-  }
-
-  @media (max-width:425px){
-    #storepagemobile {
-      margin-right:-20%;
-      margin-top:40px;
-    }
-    #changepic{
-      top:110px;
-    }
-  }
-</style>
+<link rel="stylesheet" href="{{url_for('static', filename='stylesheets/store.css')}}">
 
 
 
@@ -92,70 +67,7 @@
 
 </div>
 
-<script type="text/javascript">
-  $('#backimg').change(function(){
-    $('#backgroundForm').submit();
-  })
-
-  $('#backgroundForm').submit(function(){
-    let name = $('#backimg').val()
-    let extensions = ['jpg', 'png', 'jpg'];
-    if (!(extensions.includes(name.split('.')[name.split('.').length -1]))) {
-      alert('File must be an image.');
-      e.preventDefaut();
-    }
-  });
-
-
-  $('a[name="change-background"]').click(function(){
-    $('#change-background').slideDown(100);
-  });
-
-  $('#close-change-background').click(function(){
-    $('#change-background').slideUp(150);
-  })
-
-</script>
-
-
-
-<script type="text/javascript">
-  $('.deletebutton').click(function(){
-    let id = $(this).attr('name');
-    req = $.ajax({
-      url : '/delete_item',
-      type: 'POST',
-      data : {id:id}
-    })
-
-    req.done(function(){
-      window.location.reload();
-    })
-  })
-
-  $(document).ready(function(){
-      let num = $('#followcount').text();
-      if (num>999999) {
-        num = String((num / 1000000).toFixed(1) + 'M')
-      }
-      if (num>999) {
-        num = String((num / 1000).toFixed(1) + 'K');
-      }
-      $('#followcount').text(num);
-  })
-
-
-  $('#follow-button').click(function(){
-    req = $.ajax({
-      url : '/check_following',
-      type: 'POST',
-      data : { id : $('#follow-button').attr('store')}
-    });
-    req.done(function(data){
-      $('#follow-button').text(data.result);
-    })
-
-  })
-</script>
+<script src="{{url_for('static', filename='scripts/backgroundchange.js')}}"></script>
+<script src="{{url_for('static', filename='scripts/storelogic.js')}}"></script>
 
 {% endblock content %}

@@ -1,0 +1,24 @@
+.item-button:hover div {
+  background-color: rgb(221, 240, 234);
+}
+
+a:hover {
+  cursor:pointer;
+}
+
+#storepagemobile {
+  margin-right:0;
+}
+#changepic {
+  top:70px;
+}
+
+@media (max-width:425px){
+  #storepagemobile {
+    margin-right:-20%;
+    margin-top:40px;
+  }
+  #changepic{
+    top:110px;
+  }
+}

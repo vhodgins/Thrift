@@ -1,10 +1,6 @@
 {% extends 'layout.html' %}
 {% block content %}
-<style media="screen">
-  .panel {
-    text-align: center;
-  }
-</style>
+<link rel="stylesheet" href="{{url_for('static', filename='stylesheets/setup.css')}}">
 
 <!-- Panel 1 -->
 <div class="card panel" number='1' style="width:400px; height:300px; margin:auto;">
@@ -99,27 +95,7 @@
   </div>
 
 
-<script type="text/javascript">
-  $('.typing').keyup(function(e){
-    if (($('#Address').val() && $('#City').val()) && $('#State').val()) {
-
-      if (e.which == 13) {
-        $('[number=3]').hide();
-        $('[number=4]').show(150);
-        $('.pagecontent').focus();
-
-      }
-
-      $('#nextbuttonaddress').show();
-    }
-    else {
-      $('#nextbuttonaddress').hide();
-    }
-  })
-</script>
-
-
-
+<script src="{{url_for('static', filename='scripts/showfocus.js')}}"></script>
 <script type="text/javascript" src='{{url_for('static', filename='scripts/setup-store.js')}}'></script>
 
 {% endblock content %}
