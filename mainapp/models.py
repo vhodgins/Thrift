@@ -25,7 +25,13 @@ class User(db.Model, UserMixin):
     store = db.relationship('Store', backref='Owner', lazy=True)
     following = db.relationship('Follow', backref='Follower', lazy=True)
     location = db.Column(db.String(120), nullable=False)
+    #update on new login
+
     max_dist = db.Column(db.Integer, nullable=False, default=10)
+    #max distance it will show items from in feed
+
+    interests = db.Column(db.String(150), nullable=True, default='')
+    # generates over time based on click throughs - used to show users items they like more
 
 
 
@@ -41,38 +47,75 @@ class Store(db.Model):
     img = db.Column(db.String(60), nullable=False, default='store.jpg')
     address = db.Column(db.String(120), nullable=False)
     location = db.Column(db.String(120), nullable=False)
+    # derived from address
+
     items = db.relationship('Item', backref='Store', lazy=True)
     owner = db.Column(db.Integer, db.ForeignKey('user.id') ,nullable=False)
     tags = db.Column(db.String(1024), nullable=True)
 
+    postLimit = db.Column(db.Integer, nullable=False, default=10)
+    # Premium accounts have no post limit and no post expiration
+
+    views = db.Column(db.Integer, nullable=False, default=0)
+    # on store load raise count
+
+    lastWeekViews = db.Column(db.Integer, nullable=True)
+    # views from last week
+
+    clickthroughs = db.Column(db.Integer, nullable=False, default=0)
+    # sum of click throughs from item navigations
+
+    lastWeekClickthroughs = db.Column(db.Integer, nullable=True)
+    # click throughs from last week
 
 
     def __repr__(self):
         return f"Store('{self.name}, {self.address}')"
 
+
+
 class Follow(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     store = db.Column(db.Integer)
+    storeName = db.Column(db.String)
+    last_seen = db.Column(db.Integer)
 
     def __repr__(self):
         return f"Follow('{self.user}, {self.store}')"
 
 
+
+
 class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(60), nullable=False)
+
     type = db.Column(db.String(60), nullable=True)
+    # not used
+
     img = db.Column(db.String(60), nullable=False, default='item.jpg')
     img_width = db.Column(db.Integer, nullable=False)
     img_height = db.Column(db.Integer, nullable=False)
+
     store = db.Column(db.Integer, db.ForeignKey('store.id'), nullable=False)
+
     tags = db.Column(db.String(60), nullable=True)
     metatags = db.Column(db.String(1024), nullable=True)
+
     time_left = db.Column(db.Integer, nullable=False, default=7)
+    # If items set to disappear weekly
+
     location = db.Column(db.String(120), nullable=False)
     lat = db.Column(db.Float, nullable=False)
     lng = db.Column(db.Float, nullable=False)
+    # same as parent store location
+
+    views = db.Column(db.Integer, nullable=False, default=0)
+    # on item view
+    clickthroughs = db.Column(db.Integer, nullable=False, default=0)
+    # on click to navigate
+
 
     @hybrid_method
     def lat_dist(self, lat, n):

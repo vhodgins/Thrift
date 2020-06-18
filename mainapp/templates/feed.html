@@ -1,4 +1,4 @@
-{% extends 'layout.html' %}
+Find{% extends 'layout.html' %}
 
 {% block content %}
 
@@ -38,11 +38,11 @@
       <span class="location" style="position:absolute; right:20px; top:14px; font-weight:400; font-size:12pt;" index="{{loop.index}}" location="{{item.location}}" >{{loop.index}}</span>
       <div class="" style=" background-color: rgba(210, 210, 210, 0.61); width:100%; margin-left:-1px; margin-top:10px;">
         <hr style="margin-bottom:-10px; margin-top:-1px;">
-        <img src="{{url_for('static', filename='items/' + item.img)}}" alt=""  width="80%" style="display: block; margin:auto  ; margin-top:10px; margin-bottom:10px; ">
+        <img src="{{url_for('static', filename='items/' + item.img)}}" alt=""  width="80%" height="{{(item.img_height)}}" style="display: block; margin:auto  ; margin-top:10px; margin-bottom:10px; ">
         <hr style="margin-top:-10px; margin-bottom:-1px;">
       </div>
       <a href="{{url_for('store_redirect', id=item.store)}}#{{item.id}}" style="margin-bottom:15px; margin-left:20px; margin-top:15px"  class="text-primary">See item in store</a>
-      <a href="https://www.google.com/maps/dir/{{current_user.location}}/{{item.location}}" target="_blank" style="position:absolute; right:20px; bottom:10px;" class="btn btn-success btn-sm">Navigate</a>
+      <a href="https://www.google.com/maps/dir/{{current_user.location}}/{{item.location}}"  item="{{item.id}}" target="_blank" style="position:absolute; right:20px; bottom:10px;" class="btn btn-success btn-sm  {% if not current_user.business %}  clickthrough {% endif %} ">Find Store</a>
     </div>
 
 
@@ -57,18 +57,35 @@
       {% if not mystores %}
       <p class="text-center mt-2">You don't follow any stores yet.</p>
       {% endif %}
-      {% for store in mystores %}
-      <a href="{{url_for('global_store', store_url=store.url)}}"  class="storesidebar">
+      {% for follow in mystores %}
+      {% if lastids[follow.store] > 0 %}
+      <a href="{{url_for('store_redirect', id=follow.store)}}"  class="storesidebar">
         <div class="mt-1 mb-1 row" style="">
           <div class="col">
-          <h5 style="">{{store.name}}</h5>
+          <h5 style="">{{follow.storeName}}</h5>
         </div>
         <div class="col ">
-          <p>{{store.items | length}} new items</p>
+          <p class="text-primary">{{lastids[follow.store]}} new items</p>
         </div>
 
         </div>
       </a>
+      {% endif %}
+      {% endfor %}
+      {% for follow in mystores %}
+      {% if lastids[follow.store] ==0 %}
+      <a href="{{url_for('store_redirect', id=follow.store)}}"  class="storesidebar">
+        <div class="mt-1 mb-1 row" style="">
+          <div class="col">
+          <h5 style="">{{follow.storeName}}</h5>
+        </div>
+        <div class="col ">
+          <p>No new items</p>
+        </div>
+
+        </div>
+      </a>
+      {% endif %}
       {% endfor %}
     </div>
   </div>
@@ -98,6 +115,22 @@
 </div>
 </div>
 {% endif %}
+
+<script type="text/javascript">
+  $('.clickthrough').click(function(){
+    item = $(this).attr('item');
+     req = $.ajax({
+       url: '/clickthrough',
+       type: 'POST',
+       data: {item : item}
+     });
+
+     req.done(function(data){
+
+     })
+  })
+</script>
+
 
 <script src="{{url_for('static', filename='scripts/feedscript.js')}}"></script>
 <script src="{{url_for('static', filename='scripts/feed_search.js')}}"></script>

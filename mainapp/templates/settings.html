@@ -132,6 +132,10 @@
       <p style="margin-top:20px;">Name: <span style="position:absolute; left:100px;">{{current_user.store[0].name}}</span></p>
       <p>URL:    <a href="{{url_for('store', store_url='/'+current_user.store[0].url)}}" style="position:absolute; left:90px;" class="ml-2">/{{current_user.store[0].url}}</a></p>
       <p>Address:  {{current_user.store[0].address}}</p>
+      <hr>
+      <p>Views: {{current_user.store[0].views}}</p>
+      <p>Clickthroughs : {{current_user.store[0].clickthroughs}} this week </p>
+
     </div>
     {% endif %}
 
@@ -143,6 +147,7 @@
         <label for="max-dist">Show me items from:</label>
         <input type="text" name="" id="max-dist" value="" style="width:40px;" placeholder="{{current_user.max_dist}}">
         <label for="">miles away</label>
+        <button type="submit"  class="btn btn-primary btn-sm" style="width:70px; margin-left:10px; margin-bottom:5px;" name="button">Update</button>
 
         <p id="rangesaved" class="text-success"></p>
     </form>

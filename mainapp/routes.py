@@ -35,10 +35,13 @@ def home():
             items = Item.query.filter(Item.lat_dist(lat,lat_n) , Item.lng_dist(lng,lng_n)).all()
             random.shuffle(items)
             mystores = Follow.query.filter_by(user=current_user.id).all()
-            mystores = map(lambda c: c.store, mystores)
-            mystores = Store.query.filter(Store.id.in_(mystores)).all()
+            lastids = {}
+            for follow in mystores:
+                diff = Store.query.get(follow.store).items[-1].id - follow.last_seen
+                lastids.update({follow.store : diff})
 
-            return render_template('feed.html', page='feed', items=items, mystores=mystores)
+
+            return render_template('feed.html', page='feed', items=items, mystores=mystores, lastids=lastids)
     else:
         return render_template('home.html', page='home')
 
@@ -48,19 +51,19 @@ def home():
 def register_account():
     business = request.form['business']=='true'
     if current_user.is_authenticated:
-        return redirect(url_for(home))
+        return redirect(url_for('home'))
     if User.query.filter_by(email=request.form['email']).all():
         return jsonify({'result' : 'failure', 'failure' : 'email'})
     elif User.query.filter_by(username=request.form['username']).all():
         return jsonify({'result' : 'faulure', 'failure' : 'username'})
     else:
         hashed_password = bcrypt.generate_password_hash(request.form['password'])
-        print(request.form)
+
         location = request.form['loc']
         u = User(username=request.form['username'], email=request.form['email'], password=hashed_password, business=business, location=location)
         db.session.add(u)
         db.session.commit()
-        print(u)
+
 
         login_user(u, remember=request.form['remember'])
         return redirect(url_for('home'))
@@ -175,6 +178,7 @@ def settings():
         'State' : location[-3],
         'Zip'   : location[-2]
     }
+
     return render_template('settings.html', page='settings', location=location)
 
 
@@ -187,7 +191,8 @@ def check_following():
         db.session.commit()
         return jsonify({'result' : 'Follow'})
     else:
-        f = Follow(user=current_user.id, store=int(request.form['id']))
+        s = Store.query.get(request.form['id']).name
+        f = Follow(user=current_user.id, store=int(request.form['id']), storeName=s, last_seen=0)
         db.session.add(f)
         db.session.commit()
         return jsonify({'result' : 'Unfollow'})
@@ -202,9 +207,9 @@ def submit_store():
     description = request.form['description']
     url = request.form['url'].lower()
     address = request.form['address']
-    print(address)
+
     location = geolocator.geocode(address)
-    print(location.address)
+
     if not location:
         location = '0,0'
     else:
@@ -236,7 +241,6 @@ def global_store(store_url):
 @app.route('/store_redirect/<id>', methods=['GET', 'POST'])
 def store_redirect(id):
     s = Store.query.get(id)
-    print(s.url)
     return redirect(url_for('global_store', store_url=s.url))
 
 # new item page
@@ -254,14 +258,17 @@ def newItemUpload():
             image = request.files['image']
             img = save_pic(image)
             width, height = img[1].size
-            print(width)
-            print(height)
+            if width/height > 2:
+                height = width/2
+            if height/width > 2:
+                width = height/2
             tags = [request.form['tag1'], request.form['tag2'], request.form['tag3'] ]
             metatags = []
             for i in tags:
                 if i:
                     if wordnet.synsets(i):
                         metatags.extend(synonyms(i))
+            tags.extend(request.form['description'].split(' '))
             metatags.extend(list(map(lambda c: c+'s', tags)))
             metatags = ', '.join(metatags)
             tags = ', '.join(tags)
@@ -285,32 +292,28 @@ def search_query(query):
     s = query.split()
     syns = map(lambda c : synonyms(c) if wordnet.synsets(c) else c, s)
     syns = list(syns)
-    print(syns)
     syns.extend(s)
     items = []
-    print(syns)
     for i in syns:
         if isinstance(i, list):
             for j in i:
-                print(j)
                 item = Item.query.filter(Item.metatags.contains(j)).all()
-                print(item)
                 items.extend(item)
         else:
             item = Item.query.filter(Item.metatags.contains(i)).all()
-            print(item)
             items.extend(item)
 
     items = sorted(items, key = items.count,  reverse = True)
     items = list(dict.fromkeys(items))
 
     mystores = Follow.query.filter_by(user=current_user.id).all()
-    mystores = map(lambda c: c.store, mystores)
-    mystores = Store.query.filter(Store.id.in_(mystores)).all()
+    for follow in mystores:
+        diff = Store.query.get(follow.store).items[-1].id - follow.last_seen
+        lastids.update({follow.store : diff})
 
     stores = Store.query.filter(Store.name.contains(query)).all()
 
-    return render_template('feed.html', page='search', items=items, mystores=mystores, stores=stores)
+    return render_template('feed.html', page='search', items=items, mystores=mystores, stores=stores, lastids=lastids)
 
 
 @app.route('/delete_item', methods=['POST'])
@@ -328,7 +331,8 @@ def changebackground():
         img = request.files['image']
         img = save_background_pic(img)
         s = Store.query.get(current_user.store[0].id)
-        os.remove('mainapp/' + url_for('static', filename='store/'+s.img))
+        if s.img != 'store.jpg':
+            os.remove('mainapp' + url_for('static', filename='store/'+s.img))
         s.img = img[0]
         db.session.commit()
     return redirect(url_for('store'))
@@ -340,6 +344,44 @@ def update_max():
     current_user.max_dist = newmax
     db.session.commit()
     return jsonify({'result' : 'success'})
+
+
+@app.route('/add_view_store', methods=['POST'])
+def add_view_store():
+    store = int(request.form['store'])
+    s = Store.query.get(store)
+    s.views +=1
+    db.session.commit()
+    return jsonify({'result' : 'success'})
+
+@app.route('/add_item_view', methods=['POST'])
+def add_view_item():
+    item = int(request.form['item'])
+    i = Item.query.get(item)
+    i.views +=1
+    db.session.commit()
+    return jsonify({'result': 'success'})
+
+
+@app.route('/clickthrough', methods=['POST'])
+def clickthrough():
+    item = int(request.form['item'])
+    item = Item.query.get(item)
+    item.clickthroughs +=1
+    Store.query.get(item.store).clickthroughs += 1
+    db.session.commit()
+    return jsonify({'result' : 'success'})
+
+@app.route('/update_last_seen', methods=['POST'])
+def update_last_seen():
+    id = int(request.form['storeid'])
+    store = request.form['store']
+    f = Follow.query.filter_by(user=current_user.id , store=store).first()
+    f.last_seen = id
+    db.session.commit()
+    return jsonify({'result' : 'success'})
+
+
 
 ### Functions ###
 

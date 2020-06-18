@@ -45,12 +45,20 @@
               {% if current_user.business %}
               <a href="{{url_for('new_item')}}" style="position:relative; right:40px; color:white; margin-top:5px;"><h6>New Item</h6></a>
               {% endif %}
+              {% if current_user.business %}
               {% if current_user.store[0].id == store.id %}
               <a href="{{url_for('settings')}}" style="position:relative; right:10px; color:white; margin-top:5px;"><h6>Settings</h6></a>
               {% else %}
               <a href="{{url_for('store')}}" style="position:relative; right:10px; color:white; margin-top:5px;"><h6>Store</h6></a>
               {% endif %}
               {% endif %}
+              {% endif %}
+              {% if page=='store' %}
+              {% if not current_user.business %}
+                <a href="{{url_for('settings')}}" style="position:relative; right:10px; color:white; margin-top:5px;"><h6>Settings</h6></a>
+              {% endif %}
+              {% endif %}
+
 
           </div>
         </div>
