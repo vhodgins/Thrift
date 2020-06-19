@@ -51,8 +51,8 @@
     <button  class="btn btn-sm btn-info " style="position:absolute; right:50px; bottom:35px;border-radius:3px;" store="{{store.id}}" id="follow-button">{% if following %}Unfollow{% else %} Follow{% endif %}</button>
 
   </div>
-  <div class="row" style=";background: rgb(231, 72, 46);  margin-top:-249.9px; margin-bottom:50px; border-radius: 0 0 10px 10px; ">
-    <div class="items container" style="margin-left:90px;">
+  <div class="row " style=";background:rgb(231, 72, 46) ; margin-top:-249.9px; margin-bottom:50px; border-radius: 0 0 10px 10px; ">
+    <div class="items container " style="">
 
     {% if not store.items %}
     <div class="" style="margin-left:-90px; margin-top:40px;">
@@ -63,10 +63,11 @@
     {% endif %}
 
     {% for item in store.items %}
-    <a  id='{{item.id}}'' name='{{item.id}}' type="button" name="button" class="item-button" style="margin:10px; color: inherit">
-    <div class="card " style="width:270px;">
-      <img src="{{url_for('static', filename='items/' + item.img)}}" alt="" height="{{item.img_height/2}}px" width="{{item.img_width/2}}px" style="margin-left:{{(270-(item.img_width/2))/2}}px; margin-top:10px;  border-radius:5px;" >
-      <h5 class="text-center" style="font-weight:200">{{item.description}}</h5>
+    <a  id='{{item.id}}'' name='{{item.id}}' type="button" name="button" class="item-button " style="display:inline-block;  margin:auto; color: inherit">
+    <div class="card" style="width:270px; margin:auto;  ">
+      <div class="" style=""> </div>
+      <img src="{{url_for('static', filename='items/' + item.img)}}" alt="" height="{{item.img_height/2}}px" width="{{item.img_width/2}}px" style="margin-left:{{(270-(item.img_width/2))/2}}px; margin-top:{{(260-(item.img_height/2))/2}}px;  border-radius:5px;" >
+      <h5 class="text-center" style="font-weight:200; margin-top:{{(250-(item.img_height/2))/2}}px;">{{item.description}}</h5>
     {% if current_user.business %}
     {% if current_user.store[0].id == store.id %}
     <button type="button" class="check-stats btn btn-info btn-sm item-setting" item="{{item.id}}" name="button" style="z-index:100; position:absolute; right:0px; " >Stats</button>

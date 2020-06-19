@@ -5,7 +5,8 @@ html {
 body {
   overflow-x: hidden;
   background: linear-gradient(to bottom left, rgb(177, 90, 19), rgb(242, 42, 42));
-  background: linear-gradient(to bottom right, rgba(255, 87, 51, 0.8) 0%, rgba(144,12,62, 0.8) 70%);
+  /* rgba(255, 87, 51, 0.8) */
+  background: linear-gradient(to bottom right,  rgba(255, 87, 51, 0.8)0%, rgba(144,12,62, 0.8) 70%);
   height: 100%;
   margin: 0;
   background-repeat: no-repeat;

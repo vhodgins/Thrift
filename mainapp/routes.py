@@ -32,7 +32,7 @@ def home():
             lng = float(location.split(',')[1])
             lng_n = n/(69*math.cos(float(lat)*(3.141/180)))
             lat_n = n/69
-            items = Item.query.filter(Item.lat_dist(lat,lat_n) , Item.lng_dist(lng,lng_n)).all()
+            items = Item.query.filter(Item.lat_dist(lat,lat_n) , Item.lng_dist(lng,lng_n)).limit(5).all()
             random.shuffle(items)
             mystores = Follow.query.filter_by(user=current_user.id).all()
             lastids = {}
@@ -44,6 +44,71 @@ def home():
             return render_template('feed.html', page='feed', items=items, mystores=mystores, lastids=lastids)
     else:
         return render_template('home.html', page='home')
+
+
+@app.route('/fetch_more_items', methods=['POST'])
+def fetch_more_items():
+    current_n = int(request.form['number'])
+    location = current_user.location
+    n = current_user.max_dist
+    lat = float(location.split(',')[0])
+    lng = float(location.split(',')[1])
+    lng_n = n/(69*math.cos(float(lat)*(3.141/180)))
+    lat_n = n/69
+    items = Item.query.filter(Item.lat_dist(lat,lat_n) , Item.lng_dist(lng,lng_n)).limit(current_n+5).all()
+    items = items[current_n:]
+    random.shuffle(items)
+    newitems = []
+
+    for i in items:
+        newitems.append( str(i.description) +'<' + str(i.store) + '<' + str(i.location) + '<' + str(i.img) + '<' + str(i.img_height))
+    dict = {}
+    for i in range(len(newitems)):
+        print(newitems[i])
+        dict.update({i : newitems[i]})
+    dict.update({11 : current_user.location})
+    dict.update({12 : current_n+5})
+    dict.update({13 : 1 if current_user.business else 0})
+
+    return jsonify(dict)
+
+
+
+@login_required
+@app.route('/search/<query>', methods=['GET','POST'])
+def search_query(query):
+    s = query.split()
+    location = current_user.location
+    n = 2*current_user.max_dist
+    lat = float(location.split(',')[0])
+    lng = float(location.split(',')[1])
+    lng_n = n/(69*math.cos(float(lat)*(3.141/180)))
+    lat_n = n/69
+    syns = map(lambda c : synonyms(c) if wordnet.synsets(c) else c, s)
+    syns = list(syns)
+    syns.extend(s)
+    items = []
+    for i in syns:
+        if isinstance(i, list):
+            for j in i:
+                item = Item.query.filter(Item.lat_dist(lat,lat_n) , Item.lng_dist(lng,lng_n), Item.metatags.contains(j)).all()
+                items.extend(item)
+        else:
+            item = Item.query.filter(Item.metatags.contains(i)).all()
+            items.extend(item)
+
+    items = sorted(items, key = items.count,  reverse = True)
+    items = list(dict.fromkeys(items))
+
+    mystores = Follow.query.filter_by(user=current_user.id).all()
+    lastids = {}
+    for follow in mystores:
+        diff = Store.query.get(follow.store).items[-1].id - follow.last_seen
+        lastids.update({follow.store : diff})
+
+    stores = Store.query.filter(Store.name.contains(query)).all()
+
+    return render_template('feed.html', page='search', items=items, mystores=mystores, stores=stores, lastids=lastids)
 
 
 # Post only ajax page for registering account
@@ -166,20 +231,9 @@ def get_loc():
 @login_required
 @app.route('/settings', methods=['GET', 'POST'])
 def settings():
-    g = geocoder.ip('me').latlng
-    geolocator = Nominatim()
-    location = False
-    try:
-        location = geolocator.reverse(g).address
-    except:
-        return redirect(url_for('settings'))
-    location = location.split(',')
-    location = {
-        'State' : location[-3],
-        'Zip'   : location[-2]
-    }
 
-    return render_template('settings.html', page='settings', location=location)
+
+    return render_template('settings.html', page='settings')
 
 
 # Follow / unfollow a store
@@ -286,34 +340,7 @@ def search():
     s = request.form['search']
     return redirect(url_for('search_query', query=s))
 
-@login_required
-@app.route('/search/<query>', methods=['GET','POST'])
-def search_query(query):
-    s = query.split()
-    syns = map(lambda c : synonyms(c) if wordnet.synsets(c) else c, s)
-    syns = list(syns)
-    syns.extend(s)
-    items = []
-    for i in syns:
-        if isinstance(i, list):
-            for j in i:
-                item = Item.query.filter(Item.metatags.contains(j)).all()
-                items.extend(item)
-        else:
-            item = Item.query.filter(Item.metatags.contains(i)).all()
-            items.extend(item)
 
-    items = sorted(items, key = items.count,  reverse = True)
-    items = list(dict.fromkeys(items))
-
-    mystores = Follow.query.filter_by(user=current_user.id).all()
-    for follow in mystores:
-        diff = Store.query.get(follow.store).items[-1].id - follow.last_seen
-        lastids.update({follow.store : diff})
-
-    stores = Store.query.filter(Store.name.contains(query)).all()
-
-    return render_template('feed.html', page='search', items=items, mystores=mystores, stores=stores, lastids=lastids)
 
 
 @app.route('/delete_item', methods=['POST'])

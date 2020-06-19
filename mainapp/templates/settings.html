@@ -114,13 +114,11 @@
       <h3 style="font-weight:200;">User </h3>
       <hr style="margin-top:-2px; width:110%;">
 
-      <p style="width:100%; margin-bottom:0px;">Name</p>
-      <input type="text" name="" class="form-control" style="width:50%;" value="{% if current_user.name %}{{current_user.name}}{% endif %}">
+      <p style="width:100%; margin-bottom:0px; margin-top:20px;">Username:  <span style="position:absolute; left:150px;">{{current_user.username}}</span></p>
+      <p style="width:100%; margin-bottom:0px; margin-top:20px;">Email: <span style="position:absolute; left:150px;">{{current_user.email}}</span></p>
 
-      <p style="width:100%; margin-bottom:0px; margin-top:20px;">Username</p>
-      <input type="text" name="" class="form-control" style="width:50%" value="{{current_user.username}}">
 
-      <p style="width:100%; margin-bottom:0px; margin-top:20px;">Location: <span style="color:rgb(55, 40, 145); font-weight:500;" id='loc'></span></p>
+      <p style="width:100%; margin-bottom:0px; margin-top:20px;">Location: <span style="color:rgb(55, 40, 145); font-weight:500; position:absolute; left:150px;" id='loc'>{{current_user.location}}</span></p>
 
 
     </div>
@@ -129,12 +127,12 @@
     <div class="m-3 setting-data" id="store" style="display:none;">
       <h3 style="font-weight:200;">Store</h3>
       <hr style="margin-top:-2px; width:110%;">
-      <p style="margin-top:20px;">Name: <span style="position:absolute; left:100px;">{{current_user.store[0].name}}</span></p>
-      <p>URL:    <a href="{{url_for('store', store_url='/'+current_user.store[0].url)}}" style="position:absolute; left:90px;" class="ml-2">/{{current_user.store[0].url}}</a></p>
-      <p>Address:  {{current_user.store[0].address}}</p>
+      <p style="margin-top:20px;">Name: <span style="position:absolute; left:150px;">{{current_user.store[0].name}}</span></p>
+      <p>URL:    <a href="{{url_for('store', store_url='/'+current_user.store[0].url)}}" style="position:absolute; left:140px;" class="ml-2">/{{current_user.store[0].url}}</a></p>
+      <p>Address:  <span style="position:absolute; left:150px;">{{current_user.store[0].address}}</span></p>
       <hr>
-      <p>Views: {{current_user.store[0].views}}</p>
-      <p>Clickthroughs : {{current_user.store[0].clickthroughs}} this week </p>
+      <p>Views: <span style="position:absolute; left:150px;">{{current_user.store[0].views}}</span></p>
+      <p>Clickthroughs : <span style="position:absolute; left:150px;">{{current_user.store[0].clickthroughs}} this week </span></p>
 
     </div>
     {% endif %}

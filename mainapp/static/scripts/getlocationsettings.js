@@ -27,15 +27,3 @@ function showPosition(position) {
 }
 
 getLocation();
-
-
-req = $.ajax({
-  url : '/get_loc',
-  type : 'POST',
-  data : {lat:lat , lng:lng}
-})
-
-req.done(function(data){
-  let location = data.location;
-  $('#loc').text(location);
-})

@@ -2,6 +2,9 @@ Find{% extends 'layout.html' %}
 
 {% block content %}
 
+
+
+
 <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/feed.css')}}">
 
 {% if page=='search' %}
@@ -32,7 +35,7 @@ Find{% extends 'layout.html' %}
 
 
 
-    <div class="card " id="feedcontent" style="margin:auto; margin-bottom:20px; ">
+    <div class="card " id="feedcontent" style="margin:auto;  margin-bottom:{% if loop.last %}20px{% else %}20px {% endif%}; width:600px; ">
       <h4 class="mt-2" id="post-heading" style="margin-left:20px; font-weight:200;">{{item.description}}</h4>
       <h5 class="mt-2" id="post-heading-mobile" style="margin-left:20px; font-weight:200;">{{item.description}}</h5>
       <span class="location" style="position:absolute; right:20px; top:14px; font-weight:400; font-size:12pt;" index="{{loop.index}}" location="{{item.location}}" >{{loop.index}}</span>
@@ -44,14 +47,29 @@ Find{% extends 'layout.html' %}
       <a href="{{url_for('store_redirect', id=item.store)}}#{{item.id}}" style="margin-bottom:15px; margin-left:20px; margin-top:15px"  class="text-primary">See item in store</a>
       <a href="https://www.google.com/maps/dir/{{current_user.location}}/{{item.location}}"  item="{{item.id}}" target="_blank" style="position:absolute; right:20px; bottom:10px;" class="btn btn-success btn-sm  {% if not current_user.business %}  clickthrough {% endif %} ">Find Store</a>
     </div>
+    {% if page=='feed' %}
+    {% if loop.last %}
+    <div id="last">
 
+    <div class="card" style=" width:600px; margin:auto;">
+      <p style="text-align:center; margin-top:20px;" last="5" id="lastitem">Loading More Items</p>
+      <div class="spinner-border text-primary m-auto"  role="status">
+  <span class="sr-only">Loading...</span>
+  </div>
+  <div style="height:20px;"></div>
+
+    </div>
+    <div style="height:100px;"></div>
+  </div>
+    {% endif %}
+    {% endif %}
 
     {% endfor %}
   </div>
 
 
   <div class="col-xs-4 col-xs-offset-1 sidebar-outer">
-    <div class="fixed card col-md-2" >
+    <div class="fixed card col-md-3" >
       <h5 style="font-weight:200">My Stores</h5>
       <hr style="margin: -5px 0 0px 0">
       {% if not mystores %}
@@ -64,7 +82,7 @@ Find{% extends 'layout.html' %}
           <div class="col">
           <h5 style="">{{follow.storeName}}</h5>
         </div>
-        <div class="col ">
+        <div class="col">
           <p class="text-primary">{{lastids[follow.store]}} new items</p>
         </div>
 
@@ -75,11 +93,11 @@ Find{% extends 'layout.html' %}
       {% for follow in mystores %}
       {% if lastids[follow.store] ==0 %}
       <a href="{{url_for('store_redirect', id=follow.store)}}"  class="storesidebar">
-        <div class="mt-1 mb-1 row" style="">
-          <div class="col">
+        <div class="mt-1 mb-1 row " style="">
+          <div class="col ">
           <h5 style="">{{follow.storeName}}</h5>
         </div>
-        <div class="col ">
+        <div class="col col-md-4 " style="text-align:right">
           <p>No new items</p>
         </div>
 
@@ -126,10 +144,22 @@ Find{% extends 'layout.html' %}
      });
 
      req.done(function(data){
-
+       console.log('clicked');
      })
   })
 </script>
+
+
+
+{% if page=='feed' %}
+<script src="{{url_for('static', filename='scripts/fetch_new_items.js')}}"> </script>
+{% endif %}
+
+<script type="text/javascript">
+
+</script>
+
+
 
 
 <script src="{{url_for('static', filename='scripts/feedscript.js')}}"></script>
