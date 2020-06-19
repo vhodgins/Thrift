@@ -10,7 +10,6 @@ import secrets
 import os
 from PIL import Image
 import time
-import schedule
 from collections import Counter
 from nltk.corpus import wordnet
 from sqlalchemy import and_, or_
@@ -405,6 +404,15 @@ def update_last_seen():
     store = request.form['store']
     f = Follow.query.filter_by(user=current_user.id , store=store).first()
     f.last_seen = id
+    db.session.commit()
+    return jsonify({'result' : 'success'})
+
+
+@app.route('/update_location', methods=['POST'])
+def update_location():
+    lat = request.form['lat']
+    lng = request.form['lng']
+    current_user.location = str(lat) + ',' + str(lng)
     db.session.commit()
     return jsonify({'result' : 'success'})
 

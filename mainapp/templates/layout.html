@@ -10,6 +10,45 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/login.css')}}">
   <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js" integrity="sha256-0YPKAwZP7Mp3ALMRVB2i8GXeEndvCq3eSl/WsAl1Ryk=" crossorigin="anonymous"></script>
+  {% if current_user.is_authenticated %}
+  <meta name="{{current_user.location}}" id="c_loca" content="">
+  <script type="text/javascript">
+    var loc = $('#c_loca').attr('name');
+
+
+    let Clat = loc.split(',')[0];
+    let Clng = loc.split(',')[1];
+    var x = document.getElementById("demo");
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+      } else {
+        x.innerHTML = "Geolocation is not supported by this browser.";
+      }
+    }
+
+    function showPosition(position) {
+       newlat = position.coords.latitude;
+       newlng = position.coords.longitude;
+       if (Math.abs(Clat-newlat)>(1/69) || Math.abs(Clng-newlng)>(1/69)){
+
+       req = $.ajax({
+         url : '/update_location',
+         type : 'POST',
+         data : {lat:newlat , lng:newlng}
+       })
+
+       req.done(function(data){
+        window.location.reload(true);
+       })
+
+    }
+    console.log('Not doing that');
+  }
+
+  getLocation();
+  </script>
+  {% endif %}
 </head>
 
 <body>
