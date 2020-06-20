@@ -1,6 +1,7 @@
 from mainapp.models import *
 from flask import escape, render_template, request, url_for, flash, redirect, abort, jsonify
 from mainapp import app, db, bcrypt
+import flask_bcrypt
 from flask_login import login_user, current_user, logout_user, login_required
 import re
 from geopy.geocoders import Nominatim
@@ -134,7 +135,7 @@ def register_account():
     elif User.query.filter_by(username=request.form['username']).all():
         return jsonify({'result' : 'faulure', 'failure' : 'username'})
     else:
-        hashed_password = (bcrypt.generate_password_hash(request.form['password'])).decode('utf8')
+        hashed_password = (flask_bcrypt.generate_password_hash(request.form['password'])).decode('utf8')
 
         location = request.form['loc']
         u = User(username=request.form['username'], email=request.form['email'], password=hashed_password, business=business, location=location)
@@ -159,7 +160,7 @@ def logout():
 @app.route('/login', methods=['POST'])
 def login():
     u = User.query.filter_by(username=request.form['username']).first()
-    if u and bcrypt.check_password_hash(u.password, request.form['password']):
+    if u and flask_bcrypt.check_password_hash(u.password, request.form['password']):
         login_user(u, remember=(request.form['remember']=='true') )
     else:
         return jsonify({'result':'failure', 'failure': 'user'})
