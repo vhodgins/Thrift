@@ -134,7 +134,7 @@ def register_account():
     elif User.query.filter_by(username=request.form['username']).all():
         return jsonify({'result' : 'faulure', 'failure' : 'username'})
     else:
-        hashed_password = bcrypt.generate_password_hash(request.form['password'])
+        hashed_password = bcrypt.generate_password_hash(request.form['password']).decode('utf8')
 
         location = request.form['loc']
         u = User(username=request.form['username'], email=request.form['email'], password=hashed_password, business=business, location=location)
