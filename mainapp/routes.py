@@ -36,8 +36,17 @@ def home():
             mystores = Follow.query.filter_by(user=current_user.id).all()
             lastids = {}
             for follow in mystores:
-                diff = Store.query.get(follow.store).items[-1].id - follow.last_seen
+                diff = Store.query.get(follow.store).numposts - follow.last_seen
                 lastids.update({follow.store : diff})
+
+                # For advertised queries, create two seperate queries, one that filters by non advertising stores, then
+                # one that filters by advertising stores. Advertising stores can be from a farther distance than non advertising stores
+                # Once the list of advertised items is retrieved, sort by payment amount
+
+
+                # We also want items that have tags that the user is interested in to be shown too. For example I think we can do this by
+                # fitst querying 5 of the most recent items that the user hasnt seen and then querying 5 items that are within the users
+                # interests, then shuffle the two together to make ten items with 5 that are within the users interests to begin with.
 
 
             return render_template('feed.html', page='feed', items=items, mystores=mystores, lastids=lastids)
@@ -105,7 +114,11 @@ def search_query(query):
         diff = Store.query.get(follow.store).items[-1].id - follow.last_seen
         lastids.update({follow.store : diff})
 
-    stores = Store.query.filter(Store.name.contains(query)).all()
+    stores = Store.query.filter(or_(Store.name.contains(query) , Store.tags.contains(query))).all()
+
+    # We also want to then sort the stores by name and which is closer. I think we can give a rank to both, how close the query is to the name
+    # and how far away the store is from the user, then multiply them together to get a store rank for a query, and then from this we can sort the
+    # stores using this value as the key.
 
     return render_template('feed.html', page='search', items=items, mystores=mystores, stores=stores, lastids=lastids)
 
@@ -329,7 +342,9 @@ def newItemUpload():
             lon = current_user.store[0].location.split(',')[1]
             it = Item(description=request.form['description'], img=img[0], store=current_user.store[0].id, tags=tags, metatags=metatags, img_width = width, img_height=height, location=current_user.store[0].location, lat=lat, lng=lon)
             db.session.add(it)
+            current_user.store[0].numposts += 1
             db.session.commit()
+
 
     return redirect('store')
 
@@ -347,6 +362,7 @@ def delete_item():
     i = Item.query.get(request.form['id'])
     os.remove('mainapp/' + url_for('static', filename='items/'+i.img))
     db.session.delete(i)
+    current_user.store[0].numposts -= 1
     db.session.commit()
     return jsonify({'result': 'success'})
 
@@ -391,6 +407,9 @@ def add_view_item():
 
 @app.route('/clickthrough', methods=['POST'])
 def clickthrough():
+
+    # We also want to add tags of items that users click on more often to be added to their interests #
+
     item = int(request.form['item'])
     item = Item.query.get(item)
     item.clickthroughs +=1
@@ -403,8 +422,11 @@ def update_last_seen():
     id = int(request.form['storeid'])
     store = request.form['store']
     f = Follow.query.filter_by(user=current_user.id , store=store).first()
-    f.last_seen = id
-    db.session.commit()
+    try:
+        f.last_seen = id
+        db.session.commit()
+    except:
+        None
     return jsonify({'result' : 'success'})
 
 
@@ -417,6 +439,18 @@ def update_location():
     return jsonify({'result' : 'success'})
 
 
+# We also want to have a route that takes an ajax request that updates whether or not the user has seen a post before
+# and then when showing the user new posts it will show posts that are seen less frequently.
+
+
+
+
+# The last piece of this software will entail payment. Ideally we will have a route that has some sort of good security around it
+# and when the user can pay to promote their store or just a single product. Based on how much their budget is they will be shown people
+# more frequently and broadly, and will be debited to the service on a pay per clickthrough rate.
+
+
+
 
 ### Functions ###
 
@@ -424,7 +458,7 @@ def save_pic(form_picture):
     random_hex = secrets.token_hex(8)
     _, f_ext = os.path.splitext(form_picture.filename)
     picture_fn = random_hex + f_ext
-    picture_path = os.path.join(app.root_path, 'static\\items', picture_fn)
+    picture_path = os.path.join(app.root_path, 'static/items', picture_fn)
     output_size = (500,500)
     i = Image.open(form_picture)
     i.thumbnail(output_size)
@@ -435,7 +469,7 @@ def save_background_pic(form_picture):
     random_hex = secrets.token_hex(8)
     _, f_ext = os.path.splitext(form_picture.filename)
     picture_fn = random_hex + f_ext
-    picture_path = os.path.join(app.root_path, 'static\\store', picture_fn)
+    picture_path = os.path.join(app.root_path, 'static/store', picture_fn)
     #output_size = (1500,1500)
     i = Image.open(form_picture)
     #i.thumbnail(output_size)

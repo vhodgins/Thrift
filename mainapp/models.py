@@ -67,6 +67,8 @@ class Store(db.Model):
 
     lastWeekClickthroughs = db.Column(db.Integer, nullable=True)
     # click throughs from last week
+    numposts = db.Column(db.Integer, nullable=False, default=0)
+    # for getting new posts
 
 
     def __repr__(self):

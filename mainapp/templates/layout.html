@@ -18,14 +18,10 @@
 
     let Clat = loc.split(',')[0];
     let Clng = loc.split(',')[1];
-    var x = document.getElementById("demo");
     function getLocation() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(showPosition);
-      } else {
-        x.innerHTML = "Geolocation is not supported by this browser.";
-      }
-    }
+      }}
 
     function showPosition(position) {
        newlat = position.coords.latitude;
