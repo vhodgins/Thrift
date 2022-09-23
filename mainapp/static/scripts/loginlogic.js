@@ -1,24 +1,17 @@
 $('#register').submit(function(e) {
   let b = $(this).find('input[name="type"]:checked').val();
-  var lat = 0;
-  var lng = 0;
-    e.preventDefault();
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function(position){
 
-           lat = position.coords.latitude;
-           lng = position.coords.longitude;
-           loc = String(lat) + ',' + String(lng);
+    e.preventDefault();
+
            e.preventDefault();
            req = $.ajax({
              url: 'register_account',
              type: 'POST',
              data: {
-               email   : $('#register').find('input[name="email"]').val(),
                username: $('#register').find('input[name="name"]').val(),
                password: $('#register').find('input[name="password"]').val(),
-               business: $('#register').find('input[name="type"]:checked').val(),
-               loc     : loc,
+               charactertype: $('#register').find('input[name="type"]:checked').val(),
+               partycode: $('#register').find('input[name="partycode"]').val(),
                remember: $('#register').find('input[name="remember"]').prop('checked')
              }
            });
@@ -29,7 +22,7 @@ $('#register').submit(function(e) {
              }
              else {
                if (b=='true'){
-                 window.location.href = document.location.href + 'store';
+                 window.location.href = document.location.href + 'game';
                }
                if (b=='false') {
                  window.location.reload();
@@ -37,12 +30,6 @@ $('#register').submit(function(e) {
 
              }
            });
-
-      });
-    }
-
-
-
 });
 
 $('#login').submit(function(e) {
@@ -62,8 +49,7 @@ $('#login').submit(function(e) {
       alert('Sorry, your username or password is incorrect.')
     }
     else {
-
-      window.location = document.location.href + '/store';
+      window.location = document.location.href + 'game';
     }
   })
 

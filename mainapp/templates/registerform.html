@@ -1,27 +1,29 @@
 <div class="" style="width:400px; position:absolute; top:20%; right: 20%">
 
-
 <form class="form-control" autocomplete="off" style="display:none;" id='register' method="post">
-    <h3 style="text-align:center">Excited to join?</h3>
-    <p style="text-align:center"><i>We're excited to have you </i></p>
+    <h3 style="text-align:center"></h3>
+    <p style="text-align:center"><i>CREATE ACCOUNT</i></p>
 
     <div class="form-content m-2">
 
-    <label for="username" class="full">Username</label>
-    <input class="full" type="text" name="name" value="">
-    <label class="full" for="email">Email</label>
-    <input class="full" type="text" name="email" value="">
-    <label class="full" for="password">Password</label>
-    <input class="full" type="text" name="password" value="">
+    <label for="username" class="full">Username</label><br>
+    <input class="full" type="text" name="name" value=""> <br>
+
+    <label class="full" for="password">Password</label> <br>
+    <input class="full" type="text" name="password" value=""> <br>
+
+    <label for="partycode" class="full">Party Code</label><br>
+    <input class="full" type="text" name="partycode" value=""> <br>
+
     <label class="full" for="type">I am a: </label>
     <ul class=" choosetype form-control" style="margin-left:-.5%; margin-top:-10px; width:102.4%; border:none;">
       <li>
-        <input type="radio"  id='customer' name="type"  checked='checked' value="false">
-      <label for="customer">Person</label>
+        <input type="radio"  id='Player' name="type"  checked='checked' value="false">
+      <label for="Player">Player</label>
     </li>
     <li style="margin-left:0px;">
-      <input type="radio"  id="business" name="type"  value="true">
-      <label for="business">Business</label>
+      <input type="radio"  id="gamemaster" name="type"  value="true">
+      <label for="gamemaster">Gamemaster</label>
     </li>
     </ul>
     <label for="remember" class="mt-3 mb-2">Remember me:</label>

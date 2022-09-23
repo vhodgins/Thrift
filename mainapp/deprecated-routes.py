@@ -1,99 +1,26 @@
-from email import message
 from mainapp.models import *
 from flask import escape, render_template, request, url_for, flash, redirect, abort, jsonify
-from mainapp import app, db
+from mainapp import app, db, bcrypt
+import flask_bcrypt
 from flask_login import login_user, current_user, logout_user, login_required
-import flask_bcrypt, json
-
-
-
+import re
+from geopy.geocoders import Nominatim
+from geopy import distance
+import secrets
+import os
+from PIL import Image
+import time
+from collections import Counter
+from nltk.corpus import wordnet
+from sqlalchemy import and_, or_
+import math
+import random
 
 ### Routes ###
 
 # Landing Page for login and Register aswell as feed
-
 @app.route('/', methods=['GET', 'POST'])
 def home():
-    if current_user.is_authenticated:
-            return redirect('game')
-    return render_template('home.html', page='home')
-
-
-
-@app.route('/game', methods=['GET','POST'])
-@login_required
-def game():
-    playerlist = User.query.filter_by(partycode=current_user.partycode).all()
-    messagelist = Message.query.filter_by(partycode=current_user.partycode).all() ## Change to most recent messages
-    #print(playerlist)
-    return render_template('game.html', user=current_user, playerlist=playerlist, messagelist=messagelist)
-
-
-@app.route('/logout')
-def logout():
-    logout_user()
-    return redirect(url_for('home'))
-
-
-
-@app.route('/lookformessages', methods=['GET'])
-def lookformessages():
-    messagelist = Message.query.filter_by(partycode=current_user.partycode).order_by(Message.id.desc()).limit(50).all()
-    texts =([i.text for i in messagelist])
-    return jsonify({'messages' : texts})
-
-
-
-@app.route('/sendmessage', methods=['GET', 'POST'])
-def sendmessage():
-    m = Message(owner=current_user.id, ownername=current_user.username, text="{owner} : {text}".format(text=request.form['message'], owner=current_user.username), partycode=current_user.partycode)
-    db.session.add(m)
-    db.session.commit()
-    return jsonify({'result' : 'success', 'message' : "{name} : {message}".format(name=current_user.username, message=request.form['message']) })
-
-
-## In the register account portion, we will have the user choose a gamemaster or player character. If they choose gamemaster a random party code will be assigned, otherwise the player will 
-## need to input a party code themself.
-@app.route('/register_account', methods=['POST'])
-def register_account():
-    if current_user.is_authenticated:
-        return redirect(url_for('home'))
-    if User.query.filter_by(username=request.form['username']).all():
-        return jsonify({'result' : 'faulure', 'failure' : 'username'})
-    else:
-        hashed_password = (flask_bcrypt.generate_password_hash(request.form['password'])).decode('utf8')
-        chartype = False if request.form['charactertype']=="false" else True
-        print(chartype)
-        u = User(username=request.form['username'],password=hashed_password, charactertype=chartype)
-        db.session.add(u)
-        db.session.commit()
-        if chartype:
-            u.partycode = u.id
-        else:
-            u.partycode = request.form['partycode']
-        db.session.commit()
-        print(u.partycode)
-
-        login_user(u, remember=request.form['remember'])
-        return redirect(url_for('home'))
-
-
-@app.route('/login', methods=['POST'])
-def login():
-    u = User.query.filter_by(username=request.form['username']).first()
-    if u and flask_bcrypt.check_password_hash(u.password, request.form['password']):
-        login_user(u, remember=(request.form['remember']=='true') )
-        return redirect(url_for('game'))
-    else:
-        return jsonify({'result':'failure', 'failure': 'user'})
-
-
-
-
-
-
-
-a = '''def home():
     if current_user.is_authenticated:
         if current_user.business and not current_user.store:
             return redirect('store')
@@ -124,10 +51,10 @@ a = '''def home():
 
             return render_template('feed.html', page='feed', items=items, mystores=mystores, lastids=lastids)
     else:
-        return render_template('home.html', page='home')'''
+        return render_template('home.html', page='home')
 
 
-a = '''@app.route('/fetch_more_items', methods=['POST'])
+@app.route('/fetch_more_items', methods=['POST'])
 def fetch_more_items():
     current_n = int(request.form['number'])
     location = current_user.location
@@ -560,5 +487,3 @@ def synonyms(term):
 #     soup = BeautifulSoup(response.text, 'html.parser')
 #     soup.find('section', {'class': 'css-191l5o0-ClassicContentCard e1qo4u830'})
 #     return [span.text for span in soup.findAll('a', {'class': 'css-r5sw71-ItemAnchor etbu2a31'})]
-
-'''

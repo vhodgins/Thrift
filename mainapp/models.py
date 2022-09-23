@@ -1,7 +1,7 @@
 from mainapp import db, login_manager
 from datetime import datetime, timezone
 from flask_login import UserMixin
-from geopy import distance
+
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 from sqlalchemy import and_
 from sqlalchemy.sql import func
@@ -18,27 +18,27 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
-    image_file = db.Column(db.String(24), nullable=False, default='dflt.jpg')
-    business = db.Column(db.Boolean(), nullable=False)
-    store = db.relationship('Store', backref='Owner', lazy=True)
-    following = db.relationship('Follow', backref='Follower', lazy=True)
-    location = db.Column(db.String(120), nullable=False)
-    #update on new login
-
-    max_dist = db.Column(db.Integer, nullable=False, default=10)
-    #max distance it will show items from in feed
-
-    interests = db.Column(db.String(150), nullable=True, default='')
-    # generates over time based on click throughs - used to show users items they like more
-
-
-
+    charactertype = db.Column(db.Boolean(), nullable=False)
+    partycode = db.Column(db.Integer)
 
     def __repr__(self):
-        return f"User('{self.username}, {self.business}')"
+        return f"User('{self.username}, {self.charactertype}, {self.partycode}')"
 
+
+
+class Message(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.String(1000), nullable=False)
+    partycode = db.Column(db.Integer, nullable=False)
+    owner = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    ownername = db.Column(db.String(1000))
+
+    def __repr__(self):
+        return f"Message('{self.text},{self.owner}')"
+
+
+''''
 class Store(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(60),nullable=False)
@@ -139,3 +139,4 @@ class Item(db.Model):
 
     def __repr__(self):
         return f"Item('{self.description}, {self.type}, {self.time_left}')"
+'''
